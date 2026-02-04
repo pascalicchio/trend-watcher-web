@@ -8,6 +8,7 @@ function getStripe(): Stripe {
     if (!key) {
       throw new Error('STRIPE_SECRET_KEY is not set');
     }
+    console.log('[Stripe] Initializing with key prefix:', key.substring(0, 10) + '...');
     stripeInstance = new Stripe(key, {
       apiVersion: '2026-01-28.clover',
     });
@@ -17,6 +18,9 @@ function getStripe(): Stripe {
 
 export async function createCheckoutSession(priceId: string, successUrl: string, cancelUrl: string) {
   const stripe = getStripe();
+  
+  console.log('[Stripe] Creating session:', { priceId, successUrl, cancelUrl });
+  
   return await stripe.checkout.sessions.create({
     mode: 'subscription',
     payment_method_types: ['card'],
