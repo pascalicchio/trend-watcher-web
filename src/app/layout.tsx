@@ -4,9 +4,6 @@ import './globals.css'
 export const metadata: Metadata = {
   title: 'Trend-Watcher AI',
   description: 'AI-powered trend detection for e-commerce sellers. Get trends 48 hours before the competition.',
-  verification: {
-    tiktok: 'bbJ0VlGppkO30yDOOazxr7WFUdyRxj9d',
-  },
 }
 
 export default function RootLayout({
