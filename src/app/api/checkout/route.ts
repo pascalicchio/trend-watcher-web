@@ -9,11 +9,19 @@ export async function POST(request: NextRequest) {
   try {
     const { priceId } = await request.json();
     
-    // Use env var or fallback to hardcoded for now
-    const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://trendwatcher.io';
+    // Debug: log what's actually being read
+    const appUrl = process.env.NEXT_PUBLIC_APP_URL;
+    console.log('DEBUG - NEXT_PUBLIC_APP_URL value:', JSON.stringify(appUrl));
+    console.log('DEBUG - NODE_ENV:', process.env.NODE_ENV);
+    
+    if (!appUrl) {
+      throw new Error('NEXT_PUBLIC_APP_URL is empty');
+    }
     
     const successUrl = `${appUrl}/pricing?success=true`;
     const cancelUrl = `${appUrl}/pricing?canceled=true`;
+    
+    console.log('DEBUG - successUrl:', successUrl);
     
     const session = await stripe.checkout.sessions.create({
       mode: 'subscription',
