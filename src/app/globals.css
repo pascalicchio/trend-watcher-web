@@ -93,9 +93,19 @@ body::after {
   to { opacity: 1; transform: translateX(0); }
 }
 
-.mono { font-family: 'JetBrains Mono', monospace; letter-spacing: -0.02em; }
+/* Header hover effects */
+.header-link:hover { color: var(--text-primary); }
 
-/* Status badge hover effects */
+.header-btn-login:hover {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: var(--accent-blue);
+}
+
+.header-btn-signup:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(0, 201, 255, 0.3);
+}
+
 .status-badge:hover { transform: scale(1.05); }
 .status-badge:hover .status-dot { animation: pulseFast 1s ease-in-out infinite; }
 
@@ -122,7 +132,18 @@ body::after {
 .browser-mockup:hover { transform: translateY(-8px); box-shadow: 0 30px 80px rgba(0, 201, 255, 0.2); border-color: var(--accent-blue); }
 .browser-mockup:hover .metric-value { transform: scale(1.05); }
 
-/* Bento card hover effects */
+/* Comparison card hover */
+.comparison-card.wrong:hover { opacity: 1; }
+.comparison-card { background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 12px; padding: 40px 32px; text-align: left; transition: all 0.3s ease; backdrop-filter: blur(10px); }
+.comparison-card.wrong { opacity: 0.6; }
+.comparison-card.right { border-color: transparent; position: relative; background: linear-gradient(135deg, rgba(0, 201, 255, 0.1) 0%, rgba(146, 254, 157, 0.1) 100%); }
+.comparison-card.right::before { content: ''; position: absolute; inset: 0; border-radius: 12px; padding: 1px; background: var(--gradient-1); -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0); -webkit-mask-composite: xor; mask-composite: exclude; }
+
+/* Bento card hover with colored borders */
+.bento-card:nth-child(1):hover { border-color: var(--accent-blue); }
+.bento-card:nth-child(2):hover { border-color: var(--accent-pink); }
+.bento-card:nth-child(3):hover { border-color: var(--accent-purple); }
+
 .bento-card::before {
   content: '';
   position: absolute;
@@ -135,35 +156,79 @@ body::after {
   transition: transform 0.4s ease;
 }
 
+.bento-card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  pointer-events: none;
+}
+
+.bento-card:nth-child(1)::after { background: radial-gradient(circle at center, rgba(0, 201, 255, 0.1), transparent); }
+.bento-card:nth-child(2)::after { background: radial-gradient(circle at center, rgba(252, 70, 107, 0.1), transparent); }
+.bento-card:nth-child(3)::after { background: radial-gradient(circle at center, rgba(139, 92, 246, 0.1), transparent); }
+
 .bento-card:hover::before { transform: scaleX(1); }
-.bento-card:hover { transform: translateY(-4px); }
 .bento-card:hover::after { opacity: 1; }
+.bento-card:hover { transform: translateY(-4px); }
 
 /* Stream item hover */
+.stream-item { display: grid; grid-template-columns: 70px 1fr auto; align-items: center; gap: 16px; padding: 16px; background: rgba(0, 0, 0, 0.3); border: 1px solid var(--border-subtle); border-radius: 8px; margin-bottom: 12px; animation: slideInLeft 0.5s ease-out; backdrop-filter: blur(10px); transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); cursor: pointer; position: relative; }
+.stream-item::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: var(--gradient-1); opacity: 0; transition: opacity 0.3s ease; border-radius: 8px 0 0 8px; }
 .stream-item:hover { background: rgba(0, 201, 255, 0.08); border-color: var(--accent-blue); transform: translateX(4px); }
 .stream-item:hover::before { opacity: 1; }
 .stream-item:hover .stream-metric-value { transform: scale(1.1); }
-.stream-item { animation: slideInLeft 0.5s ease-out; }
 
 /* Trend card hover */
+.trend-card { background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 12px; padding: 24px; position: relative; overflow: hidden; backdrop-filter: blur(10px); transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
+.trend-card::after { content: ''; position: absolute; inset: 0; background: radial-gradient(circle at center, rgba(139, 92, 246, 0.15), transparent); opacity: 0; transition: opacity 0.4s ease; }
+.trend-card.locked { cursor: pointer; }
 .trend-card.locked:hover { border-color: var(--accent-blue); transform: translateY(-4px) scale(1.02); box-shadow: 0 12px 40px rgba(0, 201, 255, 0.2); }
 .trend-card.locked:hover::after { opacity: 1; }
 .trend-card.locked:hover .unlock-btn { background: var(--gradient-3); transform: scale(1.1); }
 
+/* Trend blur effect */
+.trend-blur.blurred::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(10, 14, 26, 0.85);
+  backdrop-filter: blur(12px);
+  z-index: 1;
+  border-radius: 8px;
+}
+
+.unlock-btn { background: var(--gradient-1); color: var(--bg-primary); border: none; padding: 12px 24px; border-radius: 6px; font-weight: 600; font-size: 14px; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 8px 24px rgba(0, 201, 255, 0.3); }
 .unlock-btn:hover { transform: scale(1.05); box-shadow: 0 12px 32px rgba(0, 201, 255, 0.4); }
 
+/* Trust badges hover */
+.trust-badge { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--text-tertiary); padding: 8px 16px; background: rgba(0, 0, 0, 0.3); border: 1px solid var(--border-subtle); border-radius: 6px; }
+.trust-badge:hover { border-color: var(--accent-blue); }
+
 /* Arbitrage card hover */
+.arbitrage-card { background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 12px; padding: 32px; backdrop-filter: blur(10px); transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); cursor: pointer; position: relative; overflow: hidden; }
+.arbitrage-card::after { content: ''; position: absolute; inset: 0; background: radial-gradient(circle at center, rgba(0, 201, 255, 0.1), transparent); opacity: 0; transition: opacity 0.4s ease; }
 .arbitrage-card:hover { transform: translateY(-6px); border-color: var(--accent-blue); box-shadow: 0 16px 48px rgba(0, 201, 255, 0.15); }
 .arbitrage-card:hover::after { opacity: 1; }
 .arbitrage-card:hover .margin-value { background: var(--gradient-3); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
 
 /* Pricing card hover */
+.pricing-card { background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 16px; padding: 48px 40px; position: relative; backdrop-filter: blur(10px); transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); cursor: pointer; }
 .pricing-card:hover { transform: translateY(-8px); border-color: var(--accent-blue); box-shadow: 0 20px 60px rgba(0, 201, 255, 0.2); }
+.pricing-card.featured { border-color: transparent; background: linear-gradient(135deg, rgba(0, 201, 255, 0.05) 0%, rgba(146, 254, 157, 0.05) 100%); position: relative; }
+.pricing-card.featured::before { content: ''; position: absolute; inset: 0; border-radius: 16px; padding: 1px; background: var(--gradient-1); -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0); -webkit-mask-composite: xor; mask-composite: exclude; transition: all 0.4s ease; }
+.pricing-card.featured:hover::before { background: var(--gradient-3); }
 .pricing-card.featured:hover { transform: translateY(-12px) scale(1.02); box-shadow: 0 30px 80px rgba(0, 201, 255, 0.3); }
 
 /* Footer links */
 .footer-links a:hover { color: var(--text-primary); }
 .footer-legal a:hover { color: var(--text-secondary); }
+
+.social-link { width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border-subtle); border-radius: 8px; color: var(--text-secondary); text-decoration: none; transition: all 0.3s ease; font-size: 18px; }
 .social-link:hover { background: rgba(255, 255, 255, 0.1); border-color: var(--accent-blue); color: var(--text-primary); }
 
 /* Animation utility classes */
