@@ -141,7 +141,7 @@ export default function LandingPage() {
               { icon: '🛡️', title: 'Saturation Guard', desc: 'Real-time saturation scoring tells you exactly when a trend is too crowded. Save thousands on doomed launches.', stat: '0-100% SATURATION', color: 'var(--accent-pink)', bg: 'rgba(252, 70, 107, 0.15)' },
               { icon: '🔒', title: 'Competitive Moat', desc: 'Limited to 50 members per month. Our signals remain exclusive. Your competitors stay in the dark.', stat: '50 SEATS ONLY', color: 'var(--accent-purple)', bg: 'rgba(139, 92, 246, 0.15)' }
             ].map((pillar, i) => (
-              <div key={i} style={{ background: 'var(--bg-card)', border: '1px solid var(--border-subtle)', borderRadius: '16px', padding: '48px 36px', position: 'relative', overflow: 'hidden' }}>
+              <div key={i} className="bento-card" style={{ background: 'var(--bg-card)', border: '1px solid var(--border-subtle)', borderRadius: '16px', padding: '48px 36px', position: 'relative', overflow: 'hidden' }}>
                 <div style={{ content: '', position: 'absolute', top: 0, left: 0, width: '100%', height: '4px', background: i === 0 ? 'var(--gradient-1)' : i === 1 ? 'var(--gradient-3)' : 'var(--gradient-4)', transform: 'scaleX(0)', transformOrigin: 'left', transition: 'transform 0.4s ease' }} />
                 <div style={{ fontSize: '48px', marginBottom: '24px' }}>{pillar.icon}</div>
                 <h3 style={{ fontSize: '24px', fontWeight: 700, marginBottom: '16px' }}>{pillar.title}</h3>
@@ -164,7 +164,7 @@ export default function LandingPage() {
           <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border-subtle)', borderRadius: '16px', padding: '32px', marginTop: '60px', maxHeight: '400px', overflow: 'hidden', position: 'relative' }}>
             <div style={{ position: 'absolute', bottom: 0, left: 0, width: '100%', height: '100px', background: 'linear-gradient(transparent, rgba(20, 25, 40, 0.95))', pointerEvents: 'none' }} />
             {streamItems.map((item, i) => (
-              <div key={i} style={{ display: 'grid', gridTemplateColumns: '70px 1fr auto', alignItems: 'center', gap: '16px', padding: '16px', background: 'rgba(0, 0, 0, 0.3)', border: '1px solid var(--border-subtle)', borderRadius: '8px', marginBottom: '12px', cursor: 'pointer' }}>
+              <div key={i} className="stream-item" style={{ display: 'grid', gridTemplateColumns: '70px 1fr auto', alignItems: 'center', gap: '16px', padding: '16px', background: 'rgba(0, 0, 0, 0.3)', border: '1px solid var(--border-subtle)', borderRadius: '8px', marginBottom: '12px', cursor: 'pointer' }}>
                 <div style={{ fontSize: '12px', color: 'var(--text-tertiary)', fontFamily: 'monospace' }}>{item.time}</div>
                 <div style={{ fontSize: '14px', color: 'var(--text-secondary)' }}>{item.content}</div>
                 <div style={{ display: 'flex', gap: '16px' }}>
@@ -187,7 +187,7 @@ export default function LandingPage() {
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '32px', maxWidth: '1000px', margin: '60px auto 0' }}>
             {/* Free */}
-            <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border-subtle)', borderRadius: '16px', padding: '48px 40px', position: 'relative' }}>
+            <div className="pricing-card" style={{ background: 'var(--bg-card)', border: '1px solid var(--border-subtle)', borderRadius: '16px', padding: '48px 40px', position: 'relative' }}>
               <div style={{ fontSize: '14px', textTransform: 'uppercase', letterSpacing: '0.15em', color: 'var(--text-tertiary)', marginBottom: '12px' }}>PUBLIC DATA FEED</div>
               <div style={{ fontSize: '56px', fontWeight: 800, marginBottom: '8px', fontFamily: 'monospace' }}>$0<span style={{ fontSize: '20px', color: 'var(--text-secondary)', fontWeight: 400 }}>/mo</span></div>
               <p style={{ color: 'var(--text-secondary)', marginBottom: '32px', lineHeight: 1.7 }}>Access delayed signals after saturation hits.</p>
@@ -199,7 +199,7 @@ export default function LandingPage() {
               <a href="/pricing" style={{ display: 'block', width: '100%', padding: '18px', fontSize: '16px', fontWeight: 700, borderRadius: '8px', border: '1px solid var(--border-subtle)', background: 'transparent', color: 'var(--text-primary)', textDecoration: 'none', textAlign: 'center' }}>Access Public Feed</a>
             </div>
             {/* Inner Circle */}
-            <div style={{ background: 'linear-gradient(135deg, rgba(0, 201, 255, 0.05) 0%, rgba(146, 254, 157, 0.05) 100%)', border: '1px solid transparent', borderRadius: '16px', padding: '48px 40px', position: 'relative' }}>
+            <div className="pricing-card featured" style={{ background: 'linear-gradient(135deg, rgba(0, 201, 255, 0.05) 0%, rgba(146, 254, 157, 0.05) 100%)', border: '1px solid transparent', borderRadius: '16px', padding: '48px 40px', position: 'relative' }}>
               <div style={{ content: '', position: 'absolute', inset: 0, borderRadius: '16px', padding: '1px', background: 'var(--gradient-1)', WebkitMask: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)', WebkitMaskComposite: 'xor', maskComposite: 'exclude' }} />
               <div style={{ position: 'absolute', top: '-12px', right: '24px', background: 'var(--gradient-1)', color: 'var(--bg-primary)', padding: '6px 16px', borderRadius: '20px', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em' }}>ONLY 4 SEATS LEFT</div>
               <div style={{ fontSize: '14px', textTransform: 'uppercase', letterSpacing: '0.15em', color: 'var(--text-tertiary)', marginBottom: '12px' }}>INNER CIRCLE</div>
@@ -230,7 +230,7 @@ export default function LandingPage() {
               { image: '🎯', title: '██████ ████████', score: '9.2' },
               { image: '✨', title: '████ ██████ ███', score: '8.9' }
             ].map((card, i) => (
-              <div key={i} style={{ background: 'var(--bg-card)', border: '1px solid var(--border-subtle)', borderRadius: '12px', padding: '24px', position: 'relative', overflow: 'hidden', cursor: 'pointer' }}>
+              <div key={i} className="trend-card locked" style={{ background: 'var(--bg-card)', border: '1px solid var(--border-subtle)', borderRadius: '12px', padding: '24px', position: 'relative', overflow: 'hidden', cursor: 'pointer' }}>
                 <div style={{ position: 'absolute', inset: 0, background: 'radial-gradient(circle at center, rgba(139, 92, 246, 0.15), transparent)', opacity: 0, transition: 'opacity 0.4s ease' }} />
                 <div style={{ position: 'relative' }}>
                   <div style={{ width: '100%', height: '180px', background: 'rgba(0, 0, 0, 0.3)', borderRadius: '8px', marginBottom: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '48px' }}>{card.image}</div>
@@ -263,7 +263,7 @@ export default function LandingPage() {
               { product: 'Portable Neck Fan', alert: 'Sep 28, 2025', ad: 'Sep 30, 2025', margin: '+58%' },
               { product: 'LED Therapy Mask', alert: 'Nov 03, 2025', ad: 'Nov 05, 2025', margin: '+71%' }
             ].map((card, i) => (
-              <div key={i} style={{ background: 'var(--bg-card)', border: '1px solid var(--border-subtle)', borderRadius: '12px', padding: '32px', cursor: 'pointer', position: 'relative', overflow: 'hidden' }}>
+              <div key={i} className="arbitrage-card" style={{ background: 'var(--bg-card)', border: '1px solid var(--border-subtle)', borderRadius: '12px', padding: '32px', cursor: 'pointer', position: 'relative', overflow: 'hidden' }}>
                 <div style={{ position: 'absolute', inset: 0, background: 'radial-gradient(circle at center, rgba(0, 201, 255, 0.1), transparent)', opacity: 0, transition: 'opacity 0.4s ease' }} />
                 <div style={{ position: 'relative' }}>
                   <div style={{ fontSize: '20px', fontWeight: 700, marginBottom: '24px' }}>{card.product}</div>
@@ -297,14 +297,14 @@ export default function LandingPage() {
               <div style={{ fontSize: '24px', marginBottom: '16px', display: 'flex', alignItems: 'baseline' }}><span style={{ fontWeight: 300 }}>trend</span><span style={{ fontWeight: 800, background: 'var(--gradient-1)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>watcher</span></div>
               <p style={{ color: 'var(--text-secondary)', lineHeight: 1.7, marginBottom: '24px' }}>Predictive intelligence infrastructure for e-commerce. Exploit the latency. Beat the saturation.</p>
               <div style={{ display: 'flex', gap: '12px', marginTop: '24px' }}>
-                <a href="#" style={{ width: '40px', height: '40px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(255, 255, 255, 0.05)', border: '1px solid var(--border-subtle)', borderRadius: '8px', color: 'var(--text-secondary)', textDecoration: 'none', fontSize: '18px', transition: 'all 0.3s ease' }}>𝕏</a>
-                <a href="#" style={{ width: '40px', height: '40px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(255, 255, 255, 0.05)', border: '1px solid var(--border-subtle)', borderRadius: '8px', color: 'var(--text-secondary)', textDecoration: 'none', fontSize: '18px', transition: 'all 0.3s ease' }}>in</a>
-                <a href="#" style={{ width: '40px', height: '40px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(255, 255, 255, 0.05)', border: '1px solid var(--border-subtle)', borderRadius: '8px', color: 'var(--text-secondary)', textDecoration: 'none', fontSize: '18px', transition: 'all 0.3s ease' }}>◉</a>
+                <a href="#" className="social-link" style={{ width: '40px', height: '40px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(255, 255, 255, 0.05)', border: '1px solid var(--border-subtle)', borderRadius: '8px', color: 'var(--text-secondary)', textDecoration: 'none', fontSize: '18px', transition: 'all 0.3s ease' }}>𝕏</a>
+                <a href="#" className="social-link" style={{ width: '40px', height: '40px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(255, 255, 255, 0.05)', border: '1px solid var(--border-subtle)', borderRadius: '8px', color: 'var(--text-secondary)', textDecoration: 'none', fontSize: '18px', transition: 'all 0.3s ease' }}>in</a>
+                <a href="#" className="social-link" style={{ width: '40px', height: '40px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(255, 255, 255, 0.05)', border: '1px solid var(--border-subtle)', borderRadius: '8px', color: 'var(--text-secondary)', textDecoration: 'none', fontSize: '18px', transition: 'all 0.3s ease' }}>◉</a>
               </div>
             </div>
             <div>
               <h4 style={{ fontSize: '14px', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '20px', color: 'var(--text-primary)' }}>Product</h4>
-              <ul style={{ listStyle: 'none', padding: 0 }}>
+              <ul className="footer-links" style={{ listStyle: 'none', padding: 0 }}>
                 {['How It Works', 'Pricing', 'Features', 'Case Studies', 'API Access'].map((l, j) => (
                   <li key={j} style={{ marginBottom: '12px' }}><a href="#" style={{ color: 'var(--text-secondary)', textDecoration: 'none', fontSize: '14px', transition: 'color 0.3s ease' }}>{l}</a></li>
                 ))}
@@ -312,7 +312,7 @@ export default function LandingPage() {
             </div>
             <div>
               <h4 style={{ fontSize: '14px', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '20px', color: 'var(--text-primary)' }}>Resources</h4>
-              <ul style={{ listStyle: 'none', padding: 0 }}>
+              <ul className="footer-links" style={{ listStyle: 'none', padding: 0 }}>
                 {['Documentation', 'Blog', 'Guides', 'Support Center', 'System Status'].map((l, j) => (
                   <li key={j} style={{ marginBottom: '12px' }}><a href="#" style={{ color: 'var(--text-secondary)', textDecoration: 'none', fontSize: '14px', transition: 'color 0.3s ease' }}>{l}</a></li>
                 ))}
@@ -320,7 +320,7 @@ export default function LandingPage() {
             </div>
             <div>
               <h4 style={{ fontSize: '14px', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '20px', color: 'var(--text-primary)' }}>Company</h4>
-              <ul style={{ listStyle: 'none', padding: 0 }}>
+              <ul className="footer-links" style={{ listStyle: 'none', padding: 0 }}>
                 {['About Us', 'Careers', 'Contact', 'Partners', 'Affiliate Program'].map((l, j) => (
                   <li key={j} style={{ marginBottom: '12px' }}><a href="#" style={{ color: 'var(--text-secondary)', textDecoration: 'none', fontSize: '14px', transition: 'color 0.3s ease' }}>{l}</a></li>
                 ))}
@@ -344,8 +344,8 @@ export default function LandingPage() {
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '24px' }}>
             <div style={{ color: 'var(--text-tertiary)', fontSize: '14px' }}>© 2026 Trendwatcher Inc. All rights reserved.</div>
             <div style={{ display: 'flex', gap: '24px' }}>
-              <a href="#" style={{ color: 'var(--text-tertiary)', textDecoration: 'none', fontSize: '13px', transition: 'color 0.3s ease' }}>Privacy Policy</a>
-              <a href="#" style={{ color: 'var(--text-tertiary)', textDecoration: 'none', fontSize: '13px', transition: 'color 0.3s ease' }}>Terms of Service</a>
+              <a href="#" className="footer-legal" style={{ color: 'var(--text-tertiary)', textDecoration: 'none', fontSize: '13px', transition: 'color 0.3s ease' }}>Privacy Policy</a>
+              <a href="#" className="footer-legal" style={{ color: 'var(--text-tertiary)', textDecoration: 'none', fontSize: '13px', transition: 'color 0.3s ease' }}>Terms of Service</a>
             </div>
           </div>
         </div>
