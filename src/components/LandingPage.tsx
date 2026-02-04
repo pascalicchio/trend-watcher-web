@@ -10,6 +10,80 @@ interface StreamItem {
   saturation: string;
 }
 
+interface StreamItem {
+  time: string;
+  content: string;
+  velocity: string;
+  saturation: string;
+}
+
+// Helper Components
+const StreamItem: React.FC<StreamItem> = ({ time, content, velocity, saturation }) => {
+  return (
+    <div className={styles.streamItem}>
+      <div className={`${styles.streamTime} ${styles.mono}`}>{time}</div>
+      <div className={styles.streamContent} dangerouslySetInnerHTML={{ __html: content }} />
+      <div className={styles.streamMetrics}>
+        <div className={styles.streamMetric}>
+          <div className={`${styles.streamMetricLabel} ${styles.mono}`}>Velocity</div>
+          <div className={`${styles.streamMetricValue} ${styles.velocity}`}>{velocity}</div>
+        </div>
+        <div className={styles.streamMetric}>
+          <div className={`${styles.streamMetricLabel} ${styles.mono}`}>Saturation</div>
+          <div className={`${styles.streamMetricValue} ${styles.saturation}`}>{saturation}</div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const TrendCard: React.FC<{ velocity: string }> = ({ velocity }) => {
+  return (
+    <div className={`${styles.trendCard} ${styles.locked}`}>
+      <div className={`${styles.trendBlur} ${styles.blurred}`}>
+        <div className={styles.trendImage}>📦</div>
+        <div className={styles.trendTitle}>████████ ████</div>
+      </div>
+      <div className={styles.trendScoreDisplay}>
+        <span className={`${styles.scoreLabel} ${styles.mono}`}>VELOCITY SCORE</span>
+        <span className={styles.scoreValue}>{velocity}</span>
+      </div>
+      <div className={styles.unlockOverlay}>
+        <button className={styles.unlockBtn}>Reveal 48hrs Early →</button>
+      </div>
+    </div>
+  );
+};
+
+interface ArbitrageCardProps {
+  product: string;
+  trendDate: string;
+  adDate: string;
+  margin: string;
+}
+
+const ArbitrageCard: React.FC<ArbitrageCardProps> = ({ product, trendDate, adDate, margin }) => {
+  return (
+    <div className={styles.arbitrageCard}>
+      <div className={styles.arbitrageProduct}>{product}</div>
+      <div className={styles.timeline}>
+        <div className={styles.timelineItem}>
+          <span className={styles.timelineLabel}>Trendwatcher Alert</span>
+          <span className={`${styles.timelineDate} ${styles.mono}`}>{trendDate}</span>
+        </div>
+        <div className={styles.timelineItem}>
+          <span className={styles.timelineLabel}>First Ad Detected</span>
+          <span className={`${styles.timelineDate} ${styles.mono}`}>{adDate}</span>
+        </div>
+      </div>
+      <div className={styles.marginSaved}>
+        <div className={`${styles.marginLabel} ${styles.mono}`}>MARGIN ADVANTAGE</div>
+        <div className={styles.marginValue}>{margin}</div>
+      </div>
+    </div>
+  );
+};
+
 const LandingPage: React.FC = () => {
   const [currentSeats, setCurrentSeats] = useState(46);
 
@@ -196,8 +270,138 @@ const LandingPage: React.FC = () => {
         </div>
       </section>
 
-      {/* Rest of sections would continue here... */}
-      {/* For brevity, I'm showing the structure. The full component would include all sections */}
+      {/* Live Alpha Stream */}
+      <section className={styles.liveStreamSection}>
+        <div className={styles.container}>
+          <div style={{ textAlign: 'center' }}>
+            <div className={`${styles.sectionLabel} ${styles.mono}`}>PROOF OF ALPHA</div>
+            <h2 className={styles.sectionTitle}>Watch the engine work.</h2>
+            <p className={styles.sectionDescription}>
+              Real-time metadata spikes detected by our AI. Updated every 2 minutes. This is what you'll receive before anyone else.
+            </p>
+          </div>
+
+          <div className={styles.streamContainer}>
+            <StreamItem time="3m ago" content="Metadata spike: <strong>Bedside Tech Organizer</strong> → Pet Care" velocity="+380%" saturation="1.2%" />
+            <StreamItem time="8m ago" content="Saturation Guard: <strong>LED Strip Lights</strong> → High-Risk (Avoid)" velocity="+120%" saturation="74%" />
+            <StreamItem time="14m ago" content="Golden Gap: <strong>Portable Sound Machine</strong> → Sleep Tech" velocity="+520%" saturation="0.8%" />
+            <StreamItem time="19m ago" content="API velocity spike: <strong>Resistance Band Set</strong> → Fitness" velocity="+290%" saturation="3.1%" />
+            <StreamItem time="26m ago" content="Supply chain shift: <strong>Travel Toiletry Kit</strong> → Accessories" velocity="+210%" saturation="5.4%" />
+            <StreamItem time="31m ago" content="Trend momentum: <strong>LED Face Mask</strong> → Beauty Tech (accelerating)" velocity="+440%" saturation="1.9%" />
+          </div>
+        </div>
+      </section>
+
+      {/* Free Tier Section */}
+      <section className={styles.freeTierSection}>
+        <div className={styles.container}>
+          <div style={{ textAlign: 'center' }}>
+            <div className={`${styles.sectionLabel} ${styles.mono}`}>PUBLIC DATA FEED</div>
+            <h2 className={styles.sectionTitle}>See what you're missing.</h2>
+            <p className={styles.sectionDescription}>
+              Free users see velocity scores but can't identify products until 48 hours after saturation hits. Inner Circle members exploit the gap.
+            </p>
+          </div>
+
+          <div className={styles.freeTierGrid}>
+            <TrendCard velocity="9.8" />
+            <TrendCard velocity="9.2" />
+            <TrendCard velocity="8.9" />
+          </div>
+        </div>
+      </section>
+
+      {/* Historical Arbitrage */}
+      <section className={styles.arbitrageSection}>
+        <div className={styles.container}>
+          <div style={{ textAlign: 'center' }}>
+            <div className={`${styles.sectionLabel} ${styles.mono}`}>HISTORICAL ARBITRAGE</div>
+            <h2 className={styles.sectionTitle}>We called it before they knew.</h2>
+            <p className={styles.sectionDescription}>
+              Products Trendwatcher identified 48 hours before they appeared on traditional ad-spy tools.
+            </p>
+          </div>
+
+          <div className={styles.arbitrageGrid}>
+            <ArbitrageCard 
+              product="Collapsible Water Bottle"
+              trendDate="Oct 12, 2025"
+              adDate="Oct 14, 2025"
+              margin="+62%"
+            />
+            <ArbitrageCard 
+              product="Portable Neck Fan"
+              trendDate="Sep 28, 2025"
+              adDate="Sep 30, 2025"
+              margin="+58%"
+            />
+            <ArbitrageCard 
+              product="LED Therapy Mask"
+              trendDate="Nov 03, 2025"
+              adDate="Nov 05, 2025"
+              margin="+71%"
+            />
+          </div>
+        </div>
+      </section>
+
+      {/* Pricing Section */}
+      <section className={styles.pricingSection}>
+        <div className={styles.container}>
+          <div style={{ textAlign: 'center' }}>
+            <div className={`${styles.sectionLabel} ${styles.mono}`}>JOIN THE INNER CIRCLE</div>
+            <h2 className={styles.sectionTitle}>Intelligence infrastructure.</h2>
+            <p className={styles.sectionDescription}>
+              Two tiers. One philosophy: information speed is the only real margin.
+            </p>
+          </div>
+
+          <div className={styles.pricingGrid}>
+            <div className={styles.pricingCard}>
+              <div className={`${styles.pricingTier} ${styles.mono}`}>PUBLIC DATA FEED</div>
+              <div className={styles.pricingPrice}>$0<span>/mo</span></div>
+              <p className={styles.pricingDescription}>
+                Access delayed signals after saturation hits. See velocity scores but not product details.
+              </p>
+              
+              <ul className={styles.pricingFeatures}>
+                <li>Daily velocity score updates</li>
+                <li>Saturation Guard alerts</li>
+                <li>48-hour delayed product reveals</li>
+                <li>Community access (read-only)</li>
+              </ul>
+
+              <button className={`${styles.pricingCta} ${styles.btnSecondary}`}>Access Public Feed</button>
+            </div>
+
+            <div className={`${styles.pricingCard} ${styles.featured}`}>
+              <div className={styles.pricingBadge}>ONLY 4 SEATS LEFT</div>
+              <div className={`${styles.pricingTier} ${styles.mono}`}>INNER CIRCLE</div>
+              <div className={styles.pricingPrice}>$49<span>/mo</span></div>
+              <p className={styles.pricingDescription}>
+                Full predictive intelligence. 48-hour arbitrage window. Execution-ready assets. First-mover advantage.
+              </p>
+              
+              <ul className={styles.pricingFeatures}>
+                <li>Daily Intelligence Cards at 8 AM</li>
+                <li>48-hour early product detection</li>
+                <li>AI-generated TikTok scripts</li>
+                <li>Supplier sourcing & pricing</li>
+                <li>Full competitor analysis</li>
+                <li>Exclusive community access</li>
+                <li>Velocity + Saturation scoring</li>
+              </ul>
+
+              <button className={`${styles.pricingCta} ${styles.btnPrimary}`}>
+                Start 2-Day Free Trial →
+              </button>
+              <div style={{ textAlign: 'center', marginTop: '16px', fontSize: '13px', color: 'var(--text-tertiary)' }}>
+                💰 No winning product? Don't pay a cent.
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
 
       {/* Footer */}
       <footer className={styles.footer}>
