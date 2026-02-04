@@ -1,8 +1,8 @@
 import { Metadata } from 'next'
 
 export const metadata: Metadata = {
-  title: 'Terms of Service | Trend-Watcher',
-  description: 'Terms of Service for Trend-Watcher AI-powered trend detection service.',
+  title: 'Terms of Service | TrendWatcher',
+  description: 'Terms of Service for TrendWatcher AI-powered trend detection service.',
 }
 
 export default function TermsOfService() {
@@ -15,12 +15,12 @@ export default function TermsOfService() {
         <div className="space-y-8 text-[#a1a1aa]">
           <section>
             <h2 className="text-2xl font-semibold text-[#fafafa] mb-4">1. Acceptance of Terms</h2>
-            <p>By accessing and using Trend-Watcher (&quot;the Service&quot;), you accept and agree to be bound by the terms and provisions of this agreement. If you do not agree to abide by these terms, please do not use this Service.</p>
+            <p>By accessing and using TrendWatcher (&quot;the Service&quot;), you accept and agree to be bound by the terms and provisions of this agreement. If you do not agree to abide by these terms, please do not use this Service.</p>
           </section>
 
           <section>
             <h2 className="text-2xl font-semibold text-[#fafafa] mb-4">2. Description of Service</h2>
-            <p>Trend-Watcher is an AI-powered trend detection service that identifies emerging trends and products across various platforms. The Service provides analysis, insights, and recommendations based on data gathered from publicly available sources.</p>
+            <p>TrendWatcher is an AI-powered trend detection service that identifies emerging trends and products across various platforms. The Service provides analysis, insights, and recommendations based on data gathered from publicly available sources.</p>
           </section>
 
           <section>
@@ -55,7 +55,7 @@ export default function TermsOfService() {
 
           <section>
             <h2 className="text-2xl font-semibold text-[#fafafa] mb-4">6. Limitation of Liability</h2>
-            <p>In no event shall Trend-Watcher, its affiliates, or suppliers be liable for any indirect, incidental, special, consequential, or punitive damages resulting from your use of the Service.</p>
+            <p>In no event shall TrendWatcher, its affiliates, or suppliers be liable for any indirect, incidental, special, consequential, or punitive damages resulting from your use of the Service.</p>
           </section>
 
           <section>

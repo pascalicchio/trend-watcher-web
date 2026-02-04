@@ -1,7 +1,7 @@
 import { Metadata } from 'next'
 
 export const metadata: Metadata = {
-  title: 'Trend-Watcher AI - The Competition is Sleeping. Your Bot Isn\'t.',
+  title: 'TrendWatcher AI - The Competition is Sleeping. Your Bot Isn\'t.',
   description: 'Find the next $10,000 product 48 hours before it hits ad-spy tools.',
 }
 
@@ -90,7 +90,7 @@ export default function Home() {
                 <p className="text-gray-400 text-sm">Show you products when 1,000+ sellers are already competing. Too late.</p>
               </div>
               <div className="p-4 bg-[#0a0a0a] border border-[#10B981] rounded-xl">
-                <div className="text-[#10B981] font-bold mb-2">✅ Trend-Watcher</div>
+                <div className="text-[#10B981] font-bold mb-2">✅ TrendWatcher</div>
                 <p className="text-gray-400 text-sm">Detect spikes 48 hours early. First-mover advantage. The only advantage that matters.</p>
               </div>
             </div>
@@ -330,7 +330,7 @@ export default function Home() {
 
       {/* Footer */}
       <footer className="py-12 px-4 text-center text-gray-500 border-t border-[#222]">
-        <p className="text-sm">© 2026 Trend-Watcher AI. The speed advantage for e-commerce sellers.</p>
+        <p className="text-sm">© 2026 TrendWatcher AI. The speed advantage for e-commerce sellers.</p>
         <p className="text-xs mt-2">The competition doesn't know what hit them.</p>
       </footer>
     </div>

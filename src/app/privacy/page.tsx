@@ -1,8 +1,8 @@
 import { Metadata } from 'next'
 
 export const metadata: Metadata = {
-  title: 'Privacy Policy | Trend-Watcher',
-  description: 'Privacy Policy for Trend-Watcher AI-powered trend detection service.',
+  title: 'Privacy Policy | TrendWatcher',
+  description: 'Privacy Policy for TrendWatcher AI-powered trend detection service.',
 }
 
 export default function PrivacyPolicy() {
