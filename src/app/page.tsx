@@ -216,6 +216,79 @@ export default function LandingPage() {
         </div>
       </section>
 
+      {/* Free Tier Cards */}
+      <section style={{ padding: '120px 0', background: 'rgba(15, 20, 32, 0.5)', borderTop: '1px solid var(--border-subtle)', position: 'relative', zIndex: 1 }}>
+        <div style={{ maxWidth: '1400px', margin: '0 auto', padding: '0 24px' }}>
+          <div style={{ textAlign: 'center' }}>
+            <div style={{ fontSize: '12px', textTransform: 'uppercase', letterSpacing: '0.15em', color: 'var(--accent-primary)', marginBottom: '16px', fontWeight: 600 }}>PUBLIC DATA FEED</div>
+            <h2 style={{ fontSize: '48px', fontWeight: 800, letterSpacing: '-0.03em', marginBottom: '24px' }}>See what you&apos;re missing.</h2>
+            <p style={{ fontSize: '20px', color: 'var(--text-secondary)', maxWidth: '700px', margin: '0 auto' }}>Free users see velocity scores but can&apos;t identify products until 48 hours after saturation hits.</p>
+          </div>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '24px', marginTop: '60px' }}>
+            {[
+              { image: '📦', title: '████████ ████', score: '9.8' },
+              { image: '🎯', title: '██████ ████████', score: '9.2' },
+              { image: '✨', title: '████ ██████ ███', score: '8.9' }
+            ].map((card, i) => (
+              <div key={i} style={{ background: 'var(--bg-card)', border: '1px solid var(--border-subtle)', borderRadius: '12px', padding: '24px', position: 'relative', overflow: 'hidden', cursor: 'pointer' }}>
+                <div style={{ position: 'absolute', inset: 0, background: 'radial-gradient(circle at center, rgba(139, 92, 246, 0.15), transparent)', opacity: 0, transition: 'opacity 0.4s ease' }} />
+                <div style={{ position: 'relative' }}>
+                  <div style={{ width: '100%', height: '180px', background: 'rgba(0, 0, 0, 0.3)', borderRadius: '8px', marginBottom: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '48px' }}>{card.image}</div>
+                  <div style={{ fontSize: '18px', fontWeight: 700, marginBottom: '12px' }}>{card.title}</div>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px', background: 'rgba(0, 0, 0, 0.3)', borderRadius: '6px', marginTop: '16px' }}>
+                  <span style={{ fontSize: '12px', color: 'var(--text-tertiary)' }}>VELOCITY SCORE</span>
+                  <span style={{ fontSize: '20px', fontWeight: 700, background: 'var(--gradient-1)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', fontFamily: 'monospace' }}>{card.score}</span>
+                </div>
+                <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', zIndex: 2, textAlign: 'center', width: '80%' }}>
+                  <button style={{ background: 'var(--gradient-1)', color: 'var(--bg-primary)', border: 'none', padding: '12px 24px', borderRadius: '6px', fontWeight: 600, fontSize: '14px', cursor: 'pointer' }}>Reveal 48hrs Early →</button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Historical Arbitrage */}
+      <section style={{ padding: '120px 0', position: 'relative', zIndex: 1 }}>
+        <div style={{ maxWidth: '1400px', margin: '0 auto', padding: '0 24px' }}>
+          <div style={{ textAlign: 'center' }}>
+            <div style={{ fontSize: '12px', textTransform: 'uppercase', letterSpacing: '0.15em', color: 'var(--accent-primary)', marginBottom: '16px', fontWeight: 600 }}>HISTORICAL ARBITRAGE</div>
+            <h2 style={{ fontSize: '48px', fontWeight: 800, letterSpacing: '-0.03em', marginBottom: '24px' }}>We called it before they knew.</h2>
+            <p style={{ fontSize: '20px', color: 'var(--text-secondary)', maxWidth: '700px', margin: '0 auto' }}>Products Trendwatcher identified 48 hours before ad-spy tools.</p>
+          </div>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '24px', marginTop: '60px' }}>
+            {[
+              { product: 'Collapsible Water Bottle', alert: 'Oct 12, 2025', ad: 'Oct 14, 2025', margin: '+62%' },
+              { product: 'Portable Neck Fan', alert: 'Sep 28, 2025', ad: 'Sep 30, 2025', margin: '+58%' },
+              { product: 'LED Therapy Mask', alert: 'Nov 03, 2025', ad: 'Nov 05, 2025', margin: '+71%' }
+            ].map((card, i) => (
+              <div key={i} style={{ background: 'var(--bg-card)', border: '1px solid var(--border-subtle)', borderRadius: '12px', padding: '32px', cursor: 'pointer', position: 'relative', overflow: 'hidden' }}>
+                <div style={{ position: 'absolute', inset: 0, background: 'radial-gradient(circle at center, rgba(0, 201, 255, 0.1), transparent)', opacity: 0, transition: 'opacity 0.4s ease' }} />
+                <div style={{ position: 'relative' }}>
+                  <div style={{ fontSize: '20px', fontWeight: 700, marginBottom: '24px' }}>{card.product}</div>
+                  <div style={{ marginBottom: '24px' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px 0', borderBottom: '1px solid var(--border-subtle)' }}>
+                      <span style={{ fontSize: '13px', color: 'var(--text-tertiary)' }}>Trendwatcher Alert</span>
+                      <span style={{ fontSize: '13px', fontFamily: 'monospace', color: 'var(--text-secondary)' }}>{card.alert}</span>
+                    </div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px 0' }}>
+                      <span style={{ fontSize: '13px', color: 'var(--text-tertiary)' }}>First Ad Detected</span>
+                      <span style={{ fontSize: '13px', fontFamily: 'monospace', color: 'var(--text-secondary)' }}>{card.ad}</span>
+                    </div>
+                  </div>
+                  <div style={{ textAlign: 'center', padding: '20px', background: 'linear-gradient(135deg, rgba(0, 201, 255, 0.1) 0%, rgba(146, 254, 157, 0.1) 100%)', borderRadius: '8px', border: '1px solid transparent', position: 'relative' }}>
+                    <div style={{ position: 'absolute', inset: 0, borderRadius: '8px', padding: '1px', background: 'var(--gradient-1)', WebkitMask: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)', WebkitMaskComposite: 'xor', maskComposite: 'exclude' }} />
+                    <div style={{ fontSize: '12px', color: 'var(--text-tertiary)', marginBottom: '8px' }}>MARGIN ADVANTAGE</div>
+                    <div style={{ fontSize: '36px', fontWeight: 700, background: 'var(--gradient-1)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', fontFamily: 'monospace' }}>{card.margin}</div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* Footer */}
       <footer style={{ padding: '80px 0 40px', borderTop: '1px solid var(--border-subtle)', background: 'rgba(10, 14, 26, 0.95)' }}>
         <div style={{ maxWidth: '1400px', margin: '0 auto', padding: '0 24px' }}>
