@@ -4,6 +4,7 @@ import { createCheckoutSession } from '@/lib/stripe';
 export async function POST(request: Request) {
   try {
     const { priceId } = await request.json();
+    console.log('Checkout request received for priceId:', priceId);
     
     const session = await createCheckoutSession(
       priceId,
@@ -11,11 +12,12 @@ export async function POST(request: Request) {
       `${process.env.NEXT_PUBLIC_APP_URL || 'https://trendwatcher.io'}/pricing?canceled=true`
     );
 
+    console.log('Checkout session created:', session.id);
     return NextResponse.json({ url: session.url });
-  } catch (error) {
-    console.error('Stripe checkout error:', error);
+  } catch (error: any) {
+    console.error('Stripe checkout error:', error.message);
     return NextResponse.json(
-      { error: 'Failed to create checkout session' },
+      { error: error.message || 'Failed to create checkout session' },
       { status: 500 }
     );
   }
