@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 
 export default function LandingPage() {
   const [seatCount, setSeatCount] = useState(46);
-  const [streamItems, setStreamItems] = useState([
+  const [streamItems] = useState([
     { time: '3m ago', content: 'Metadata spike: Bedside Tech Organizer → Pet Care', velocity: '+380%', saturation: '1.2%' },
     { time: '8m ago', content: 'Saturation Guard: LED Strip Lights → High-Risk (Avoid)', velocity: '+120%', saturation: '74%' },
     { time: '14m ago', content: 'Golden Gap: Portable Sound Machine → Sleep Tech', velocity: '+520%', saturation: '0.8%' },
@@ -13,28 +13,12 @@ export default function LandingPage() {
     { time: '31m ago', content: 'Trend momentum: LED Face Mask → Beauty Tech (accelerating)', velocity: '+440%', saturation: '1.9%' },
   ]);
   
-  const [isClient, setIsClient] = useState(false);
-
   useEffect(() => {
-    setIsClient(true);
-    const seatInterval = setInterval(() => {
+    const interval = setInterval(() => {
       setSeatCount(prev => (Math.random() > 0.7 && prev < 50) ? prev + 1 : prev);
     }, 15000);
-    return () => clearInterval(seatInterval);
+    return () => clearInterval(interval);
   }, []);
-
-  useEffect(() => {
-    if (!isClient) return;
-    const newItems = [
-      { time: 'Just now', content: 'Metadata spike: Minimalist Desk Lamp → Home Office', velocity: '+340%', saturation: '2.1%' },
-      { time: '2m ago', content: 'Golden Gap: Ergonomic Phone Stand → Tech Accessories', velocity: '+410%', saturation: '0.9%' },
-      { time: '5m ago', content: 'High saturation alert: Phone Ring Holder → Avoid', velocity: '+80%', saturation: '68%' },
-    ];
-    const streamInterval = setInterval(() => {
-      setStreamItems(prev => [newItems[Math.floor(Math.random() * newItems.length)], ...prev.slice(0, 5)]);
-    }, 8000);
-    return () => clearInterval(streamInterval);
-  }, [isClient]);
 
   return (
     <>
@@ -45,7 +29,7 @@ export default function LandingPage() {
         <div style={{ maxWidth: '1400px', margin: '0 auto', padding: '0 24px' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <div style={{ fontSize: '20px', display: 'flex', alignItems: 'baseline' }}>
-              <span style={{ fontWeight: 300 }}>trend</span>
+              <span style={{ fontWeight: 300, color: 'var(--text-primary)' }}>trend</span>
               <span style={{ fontWeight: 800, background: 'var(--gradient-1)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>watcher</span>
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '24px' }}>
@@ -145,17 +129,16 @@ export default function LandingPage() {
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '24px', marginTop: '60px' }}>
             {[
-              { icon: '⚡', title: '48-Hour Arbitrage', desc: 'We track metadata whispers—supply chain spikes, API velocity, social sentiment—before an ad is ever created.', stat: '2-DAY HEAD START', color: 'var(--accent-blue)', bg: 'rgba(0, 201, 255, 0.15)', gradient: 'var(--gradient-1)' },
-              { icon: '🛡️', title: 'Saturation Guard', desc: 'Real-time saturation scoring tells you exactly when a trend is too crowded. Save thousands on doomed launches.', stat: '0-100% SATURATION', color: 'var(--accent-pink)', bg: 'rgba(252, 70, 107, 0.15)', gradient: 'var(--gradient-3)' },
-              { icon: '🔒', title: 'Competitive Moat', desc: 'Limited to 50 members per month. Our signals remain exclusive. Your competitors stay in the dark.', stat: '50 SEATS ONLY', color: 'var(--accent-purple)', bg: 'rgba(139, 92, 246, 0.15)', gradient: 'var(--gradient-4)' }
+              { icon: '⚡', title: '48-Hour Arbitrage', desc: 'We track metadata whispers—supply chain spikes, API velocity, social sentiment—before an ad is ever created.', stat: '2-DAY HEAD START', gradient: 'var(--gradient-1)' },
+              { icon: '🛡️', title: 'Saturation Guard', desc: 'Real-time saturation scoring tells you exactly when a trend is too crowded. Save thousands on doomed launches.', stat: '0-100% SATURATION', gradient: 'var(--gradient-3)' },
+              { icon: '🔒', title: 'Competitive Moat', desc: 'Limited to 50 members per month. Our signals remain exclusive. Your competitors stay in the dark.', stat: '50 SEATS ONLY', gradient: 'var(--gradient-4)' }
             ].map((pillar, i) => (
               <div key={i} style={{ background: 'var(--bg-card)', border: '1px solid var(--border-subtle)', borderRadius: '16px', padding: '48px 36px', position: 'relative', overflow: 'hidden' }}>
                 <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '4px', background: pillar.gradient, transform: 'scaleX(0)', transformOrigin: 'left' }} />
-                <div style={{ position: 'absolute', inset: 0, opacity: 0, transition: 'opacity 0.4s ease', background: i === 0 ? 'radial-gradient(circle at center, rgba(0, 201, 255, 0.1), transparent)' : i === 1 ? 'radial-gradient(circle at center, rgba(252, 70, 107, 0.1), transparent)' : 'radial-gradient(circle at center, rgba(139, 92, 246, 0.1), transparent)' }} />
                 <div style={{ fontSize: '48px', marginBottom: '24px' }}>{pillar.icon}</div>
                 <h3 style={{ fontSize: '24px', fontWeight: 700, marginBottom: '16px' }}>{pillar.title}</h3>
                 <p style={{ color: 'var(--text-secondary)', lineHeight: 1.7, marginBottom: '20px' }}>{pillar.desc}</p>
-                <div style={{ display: 'inline-flex', padding: '8px 16px', background: pillar.bg, borderRadius: '6px', fontSize: '14px', fontWeight: 600, fontFamily: 'monospace', color: pillar.color }}>{pillar.stat}</div>
+                <div style={{ display: 'inline-flex', padding: '8px 16px', background: i === 0 ? 'rgba(0, 201, 255, 0.15)' : i === 1 ? 'rgba(252, 70, 107, 0.15)' : 'rgba(139, 92, 246, 0.15)', borderRadius: '6px', fontSize: '14px', fontWeight: 600, fontFamily: 'monospace', color: i === 0 ? 'var(--accent-blue)' : i === 1 ? 'var(--accent-pink)' : 'var(--accent-purple)' }}>{pillar.stat}</div>
               </div>
             ))}
           </div>
@@ -176,14 +159,8 @@ export default function LandingPage() {
                 <div style={{ fontSize: '12px', color: 'var(--text-tertiary)', fontFamily: 'monospace' }}>{item.time}</div>
                 <div style={{ fontSize: '14px', color: 'var(--text-secondary)' }}>{item.content}</div>
                 <div style={{ display: 'flex', gap: '16px' }}>
-                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
-                    <div style={{ fontSize: '10px', color: 'var(--text-tertiary)', textTransform: 'uppercase' }}>Velocity</div>
-                    <div style={{ fontSize: '14px', fontWeight: 700, fontFamily: 'monospace', background: 'var(--gradient-1)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>{item.velocity}</div>
-                  </div>
-                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
-                    <div style={{ fontSize: '10px', color: 'var(--text-tertiary)', textTransform: 'uppercase' }}>Saturation</div>
-                    <div style={{ fontSize: '14px', fontWeight: 700, fontFamily: 'monospace', background: 'var(--gradient-4)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>{item.saturation}</div>
-                  </div>
+                  <div><div style={{ fontSize: '10px', color: 'var(--text-tertiary)', textTransform: 'uppercase' }}>Velocity</div><div style={{ fontSize: '14px', fontWeight: 700, fontFamily: 'monospace', background: 'var(--gradient-1)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>{item.velocity}</div></div>
+                  <div><div style={{ fontSize: '10px', color: 'var(--text-tertiary)', textTransform: 'uppercase' }}>Saturation</div><div style={{ fontSize: '14px', fontWeight: 700, fontFamily: 'monospace', background: 'var(--gradient-4)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>{item.saturation}</div></div>
                 </div>
               </div>
             ))}
@@ -265,4 +242,13 @@ export default function LandingPage() {
       <section style={{ padding: '120px 0', background: 'rgba(15, 20, 32, 0.5)', borderTop: '1px solid var(--border-subtle)', position: 'relative', zIndex: 1 }}>
         <div style={{ maxWidth: '1400px', margin: '0 auto', padding: '0 24px' }}>
           <div style={{ textAlign: 'center' }}>
-            <div style={{ fontSize: '12px', textTransform: 'uppercase', letterSpacing: '0.15em', color: 'var(--accent-primary)', marginBottom: '16px', fontWeight: 600 }}
+            <div style={{ fontSize: '12px', textTransform: 'uppercase', letterSpacing: '0.15em', color: 'var(--accent-primary)', marginBottom: '16px', fontWeight: 600 }}>JOIN THE INNER CIRCLE</div>
+            <h2 style={{ fontSize: '48px', fontWeight: 800, letterSpacing: '-0.03em', marginBottom: '24px' }}>Intelligence infrastructure.</h2>
+            <p style={{ fontSize: '20px', color: 'var(--text-secondary)', maxWidth: '700px', margin: '0 auto' }}>Two tiers. One philosophy: information speed is the only real margin.</p>
+          </div>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '32px', maxWidth: '1000px', margin: '60px auto 0' }}>
+            <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border-subtle)', borderRadius: '16px', padding: '48px 40px', position: 'relative' }}>
+              <div style={{ fontSize: '14px', textTransform: 'uppercase', letterSpacing: '0.15em', color: 'var(--text-tertiary)', marginBottom: '12px' }}>PUBLIC DATA FEED</div>
+              <div style={{ fontSize: '56px', fontWeight: 800, marginBottom: '8px', fontFamily: 'monospace' }}>$0<span style={{ fontSize: '20px', color: 'var(--text-secondary)', fontWeight: 400 }}>/mo</span></div>
+              <p style={{ color: 'var(--text-secondary)', marginBottom: '32px', lineHeight: 1.7 }}>Access delayed signals after saturation hits. See velocity scores but not product details.</p>
+              <ul style={{ listStyle: 'none', marginBottom:
