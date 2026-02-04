@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 
 export default function LandingPage() {
-  const [streamItems, setStreamItems] = useState([
+  const [streamItems] = useState([
     { time: '3m ago', content: 'Metadata spike: Bedside Tech Organizer → Pet Care', velocity: '+380%', saturation: '1.2%' },
     { time: '8m ago', content: 'Saturation Guard: LED Strip Lights → High-Risk (Avoid)', velocity: '+120%', saturation: '74%' },
     { time: '14m ago', content: 'Golden Gap: Portable Sound Machine → Sleep Tech', velocity: '+520%', saturation: '0.8%' },
@@ -15,44 +15,20 @@ export default function LandingPage() {
   const [seatCount, setSeatCount] = useState(46);
   const [isClient, setIsClient] = useState(false);
 
-  useEffect(() => {
-    setIsClient(true);
-  }, []);
+  useEffect(() => { setIsClient(true); }, []);
 
   useEffect(() => {
     if (!isClient) return;
-    const seatInterval = setInterval(() => {
+    const interval = setInterval(() => {
       if (Math.random() > 0.7 && seatCount < 50) {
         setSeatCount(prev => Math.min(prev + 1, 50));
       }
     }, 15000);
-    return () => clearInterval(seatInterval);
+    return () => clearInterval(interval);
   }, [isClient, seatCount]);
 
   return (
     <>
-      <style jsx global>{`
-        :root {
-          --bg-primary: #0a0e1a;
-          --bg-secondary: #0f1420;
-          --bg-card: rgba(20, 25, 40, 0.6);
-          --text-primary: #f5f5f5;
-          --text-secondary: #a0a5b8;
-          --text-tertiary: #6b7088;
-          --accent-primary: #00ff88;
-          --accent-blue: #00C9FF;
-          --accent-pink: #FC466B;
-          --accent-purple: #8B5CF6;
-          --gradient-1: linear-gradient(90deg, #00C9FF 0%, #92FE9D 100%);
-          --gradient-2: linear-gradient(90deg, #1CB5E0 0%, #000851 100%);
-          --gradient-3: linear-gradient(90deg, #FC466B 0%, #3F5EFB 100%);
-          --gradient-4: linear-gradient(135deg, #8B5CF6 0%, #EC4899 100%);
-          --border-subtle: rgba(255, 255, 255, 0.08);
-        }
-        @keyframes pulse { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.6; transform: scale(0.9); } }
-        @keyframes backgroundPulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.7; } }
-      `}</style>
-
       {/* Background */}
       <div style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', background: 'radial-gradient(circle at 20% 30%, rgba(0, 201, 255, 0.15) 0%, transparent 50%), radial-gradient(circle at 80% 70%, rgba(139, 92, 246, 0.15) 0%, transparent 50%), radial-gradient(circle at 50% 50%, rgba(146, 254, 157, 0.08) 0%, transparent 70%)', pointerEvents: 'none', zIndex: 0, animation: 'backgroundPulse 15s ease-in-out infinite' }} />
       <div style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', backgroundImage: 'repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.02) 0px, transparent 1px, transparent 2px, rgba(255, 255, 255, 0.02) 3px), repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.02) 0px, transparent 1px, transparent 2px, rgba(255, 255, 255, 0.02) 3px)', pointerEvents: 'none', zIndex: 0, opacity: 0.4 }} />
@@ -234,7 +210,7 @@ export default function LandingPage() {
                   <li key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: '12px', padding: '12px 0', fontSize: '15px', color: 'var(--text-secondary)' }}><span style={{ color: 'var(--accent-primary)', fontWeight: 700 }}>✓</span>{f}</li>
                 ))}
               </ul>
-              <a href="/pricing" style={{ display: 'block', width: '100%', padding: '18px', fontSize: '16px', fontWeight: 700', borderRadius: '8px', border: 'none', background: 'var(--gradient-1)', color: 'var(--bg-primary)', textDecoration: 'none', textAlign: 'center', boxShadow: '0 8px 32px rgba(0, 201, 255, 0.3)' }}>Start 2-Day Free Trial →</a>
+              <a href="/pricing" style={{ display: 'block', width: '100%', padding: '18px', fontSize: '16px', fontWeight: 700, borderRadius: '8px', border: 'none', background: 'var(--gradient-1)', color: 'var(--bg-primary)', textDecoration: 'none', textAlign: 'center', boxShadow: '0 8px 32px rgba(0, 201, 255, 0.3)' }}>Start 2-Day Free Trial →</a>
             </div>
           </div>
         </div>
