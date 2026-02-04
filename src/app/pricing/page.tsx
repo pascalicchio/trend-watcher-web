@@ -1,9 +1,6 @@
 'use client';
 
-import { loadStripe } from '@stripe/stripe-js';
 import { useState, useEffect } from 'react';
-
-const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || 'pk_test_51SwyuP31jVHQylkhzTsGCEtxCMouTtWLyAuXwCBkGSN0cabmgp32xVXu6IrqsMRKAnxA8NFVNA9gtI9YRCOlxsmA009dAV9MSO');
 
 const PLANS = [
   {
@@ -53,11 +50,6 @@ export default function PricingPage() {
     
     setLoading(priceId);
     try {
-      const stripe = await stripePromise;
-      if (!stripe) {
-        throw new Error('Stripe failed to load');
-      }
-      
       const response = await fetch('/api/checkout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -66,8 +58,8 @@ export default function PricingPage() {
       const { url, error } = await response.json();
       
       if (url) {
-        // New Stripe.js: use redirect option
-        await stripe.redirectToCheckout({ url });
+        // Direct redirect
+        window.location.href = url;
       } else if (error) {
         console.error('Server error:', error);
       }
