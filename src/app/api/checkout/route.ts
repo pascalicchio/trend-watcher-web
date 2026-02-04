@@ -1,24 +1,16 @@
 import { NextResponse } from 'next/server';
-import { createCheckoutSession } from '@/lib/stripe';
 
 export async function POST(request: Request) {
   try {
     const { priceId } = await request.json();
     console.log('Checkout request for:', priceId);
     
-    const appUrl = process.env.NEXT_PUBLIC_APP_URL;
-    if (!appUrl) {
-      throw new Error('NEXT_PUBLIC_APP_URL not set in environment');
-    }
+    // Test without Stripe
+    const testUrl = 'https://example.com/pricing?success=true';
     
-    const successUrl = `${appUrl}/pricing?success=true`;
-    const cancelUrl = `${appUrl}/pricing?canceled=true`;
+    console.log('Returning test URL:', testUrl);
     
-    const session = await createCheckoutSession(priceId, successUrl, cancelUrl);
-    console.log('Session created:', session.id);
-    
-    // Return raw response without wrapping
-    return new Response(JSON.stringify({ url: session.url }), {
+    return new Response(JSON.stringify({ url: testUrl }), {
       headers: { 'Content-Type': 'application/json' },
     });
   } catch (error: any) {
