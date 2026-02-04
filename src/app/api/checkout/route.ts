@@ -6,13 +6,13 @@ export async function POST(request: Request) {
     const { priceId } = await request.json();
     console.log('Checkout request received for priceId:', priceId);
     
+    // Debug: hardcode for now
     const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://trendwatcher.io';
-    console.log('NEXT_PUBLIC_APP_URL:', appUrl);
+    console.log('NEXT_PUBLIC_APP_URL env:', process.env.NEXT_PUBLIC_APP_URL ? 'SET' : 'NOT SET');
     
     const successUrl = `${appUrl}/pricing?success=true`;
     const cancelUrl = `${appUrl}/pricing?canceled=true`;
     console.log('Success URL:', successUrl);
-    console.log('Cancel URL:', cancelUrl);
     
     const session = await createCheckoutSession(priceId, successUrl, cancelUrl);
 
