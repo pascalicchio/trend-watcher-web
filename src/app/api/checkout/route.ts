@@ -10,15 +10,9 @@ export async function POST(request: NextRequest) {
     const { priceId } = await request.json();
     console.log('Checkout request for:', priceId);
     
-    const appUrl = process.env.NEXT_PUBLIC_APP_URL;
-    console.log('APP_URL:', appUrl);
-    
-    if (!appUrl) {
-      throw new Error('NEXT_PUBLIC_APP_URL not set');
-    }
-    
-    const successUrl = `${appUrl}/pricing?success=true`;
-    const cancelUrl = `${appUrl}/pricing?canceled=true`;
+    // Use a static URL for testing
+    const successUrl = 'https://trendwatcher.io/pricing?success=true';
+    const cancelUrl = 'https://trendwatcher.io/pricing?canceled=true';
     
     console.log('Creating session with URLs:', { successUrl, cancelUrl });
     
