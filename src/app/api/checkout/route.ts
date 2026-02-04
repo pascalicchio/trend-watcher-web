@@ -8,13 +8,12 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', {
 export async function POST(request: NextRequest) {
   try {
     const { priceId } = await request.json();
-    console.log('Checkout request for:', priceId);
     
-    // Use a static URL for testing
-    const successUrl = 'https://trendwatcher.io/pricing?success=true';
-    const cancelUrl = 'https://trendwatcher.io/pricing?canceled=true';
+    // Use env var or fallback to hardcoded for now
+    const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://trendwatcher.io';
     
-    console.log('Creating session with URLs:', { successUrl, cancelUrl });
+    const successUrl = `${appUrl}/pricing?success=true`;
+    const cancelUrl = `${appUrl}/pricing?canceled=true`;
     
     const session = await stripe.checkout.sessions.create({
       mode: 'subscription',
@@ -27,15 +26,11 @@ export async function POST(request: NextRequest) {
       cancel_url: cancelUrl,
     });
     
-    console.log('Session created:', session.id);
-    console.log('Session URL:', session.url);
-    
     return new NextResponse(JSON.stringify({ url: session.url }), {
       headers: { 'Content-Type': 'application/json' },
     });
   } catch (error: any) {
     console.error('ERROR:', error.message);
-    console.error('Full error:', JSON.stringify(error));
     return new NextResponse(JSON.stringify({ error: error.message }), {
       status: 500,
       headers: { 'Content-Type': 'application/json' },
