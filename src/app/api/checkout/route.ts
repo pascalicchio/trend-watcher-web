@@ -1,11 +1,13 @@
-export async function GET() {
-  return new Response('{"test":"ok"}', {
+import { NextRequest, NextResponse } from 'next/server';
+
+export async function GET(request: NextRequest) {
+  return new NextResponse('{"test":"ok"}', {
     headers: { 'Content-Type': 'application/json' },
   });
 }
 
-export async function POST() {
-  return new Response('{"test":"post"}', {
+export async function POST(request: NextRequest) {
+  return new NextResponse('{"test":"post"}', {
     headers: { 'Content-Type': 'application/json' },
   });
 }
