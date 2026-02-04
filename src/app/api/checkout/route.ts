@@ -5,23 +5,15 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', {
   apiVersion: '2026-01-28.clover' 
 });
 
+// Hardcode the URL to bypass the env var issue on Vercel Edge
+const APP_URL = 'https://trendwatcher.io';
+
 export async function POST(request: NextRequest) {
   try {
     const { priceId } = await request.json();
     
-    // Debug: log what's actually being read
-    const appUrl = process.env.NEXT_PUBLIC_APP_URL;
-    console.log('DEBUG - NEXT_PUBLIC_APP_URL value:', JSON.stringify(appUrl));
-    console.log('DEBUG - NODE_ENV:', process.env.NODE_ENV);
-    
-    if (!appUrl) {
-      throw new Error('NEXT_PUBLIC_APP_URL is empty');
-    }
-    
-    const successUrl = `${appUrl}/pricing?success=true`;
-    const cancelUrl = `${appUrl}/pricing?canceled=true`;
-    
-    console.log('DEBUG - successUrl:', successUrl);
+    const successUrl = `${APP_URL}/pricing?success=true`;
+    const cancelUrl = `${APP_URL}/pricing?canceled=true`;
     
     const session = await stripe.checkout.sessions.create({
       mode: 'subscription',
