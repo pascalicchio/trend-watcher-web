@@ -30,7 +30,7 @@ export default function LandingPage() {
   return (
     <>
       {/* Background */}
-      <div style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', background: 'radial-gradient(circle at 20% 30%, rgba(0, 201, 255, 0.15) 0%, transparent 50%), radial-gradient(circle at 80% 70%, rgba(139, 92, 246, 0.15) 0%, transparent 50%), radial-gradient(circle at 50% 50%, rgba(146, 254, 157, 0.08) 0%, transparent 70%)', pointerEvents: 'none', zIndex: 0, animation: 'backgroundPulse 15s ease-in-out infinite' }} />
+      <div className="animate-background-pulse" style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', background: 'radial-gradient(circle at 20% 30%, rgba(0, 201, 255, 0.15) 0%, transparent 50%), radial-gradient(circle at 80% 70%, rgba(139, 92, 246, 0.15) 0%, transparent 50%), radial-gradient(circle at 50% 50%, rgba(146, 254, 157, 0.08) 0%, transparent 70%)', pointerEvents: 'none', zIndex: 0 }} />
       <div style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', backgroundImage: 'repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.02) 0px, transparent 1px, transparent 2px, rgba(255, 255, 255, 0.02) 3px), repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.02) 0px, transparent 1px, transparent 2px, rgba(255, 255, 255, 0.02) 3px)', pointerEvents: 'none', zIndex: 0, opacity: 0.4 }} />
 
       {/* Header */}
@@ -40,7 +40,7 @@ export default function LandingPage() {
             <div style={{ fontSize: '20px', fontWeight: 300 }}><span style={{ color: 'var(--text-primary)' }}>trend</span><span style={{ fontWeight: 800, background: 'var(--gradient-1)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>watcher</span></div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '24px' }}>
               <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', padding: '6px 14px', background: 'var(--bg-card)', borderRadius: '20px', fontSize: '12px', cursor: 'pointer' }}>
-                <div style={{ width: '6px', height: '6px', borderRadius: '50%', background: 'var(--gradient-1)', animation: 'pulse 2s ease-in-out infinite' }} />
+                <div className="animate-pulse" style={{ width: '6px', height: '6px', borderRadius: '50%', background: 'var(--gradient-1)' }} />
                 <span style={{ fontFamily: 'monospace' }}>LIVE ENGINE</span>
               </div>
               <a href="/login" style={{ padding: '10px 20px', fontSize: '14px', fontWeight: 600, borderRadius: '6px', border: '1px solid var(--border-subtle)', background: 'transparent', color: 'var(--text-primary)', textDecoration: 'none' }}>Login</a>
@@ -82,7 +82,7 @@ export default function LandingPage() {
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '24px' }}>
                     <div style={{ fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--text-tertiary)', fontFamily: 'monospace' }}>ALPHA ALERT #2847</div>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '11px', fontWeight: 600, background: 'var(--gradient-1)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
-                      <div style={{ width: '6px', height: '6px', borderRadius: '50%', background: 'var(--gradient-1)', animation: 'pulse 2s ease-in-out infinite' }} />LIVE
+                      <div className="animate-pulse" style={{ width: '6px', height: '6px', borderRadius: '50%', background: 'var(--gradient-1)' }} />LIVE
                     </div>
                   </div>
                   <div style={{ fontSize: '28px', fontWeight: 700, marginBottom: '24px' }}>Aesthetic Planner Kit</div>
@@ -290,30 +290,62 @@ export default function LandingPage() {
       </section>
 
       {/* Footer */}
-      <footer style={{ padding: '80px 0 40px', borderTop: '1px solid var(--border-subtle)', background: 'rgba(10, 14, 26, 0.95)' }}>
+      <footer style={{ padding: '80px 0 40px', borderTop: '1px solid var(--border-subtle)', background: 'rgba(10, 14, 26, 0.95)', backdropFilter: 'blur(20px)' }}>
         <div style={{ maxWidth: '1400px', margin: '0 auto', padding: '0 24px' }}>
           <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr 1fr', gap: '60px', marginBottom: '60px' }}>
             <div>
               <div style={{ fontSize: '24px', marginBottom: '16px', display: 'flex', alignItems: 'baseline' }}><span style={{ fontWeight: 300 }}>trend</span><span style={{ fontWeight: 800, background: 'var(--gradient-1)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>watcher</span></div>
               <p style={{ color: 'var(--text-secondary)', lineHeight: 1.7, marginBottom: '24px' }}>Predictive intelligence infrastructure for e-commerce. Exploit the latency. Beat the saturation.</p>
-            </div>
-            {['Product', 'Resources', 'Company'].map((col, i) => (
-              <div key={i}>
-                <h4 style={{ fontSize: '14px', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '20px' }}>{col}</h4>
-                <ul style={{ listStyle: 'none', padding: 0 }}>
-                  {['Link 1', 'Link 2', 'Link 3', 'Link 4', 'Link 5'].map((l, j) => (
-                    <li key={j} style={{ marginBottom: '12px' }}><a href="#" style={{ color: 'var(--text-secondary)', textDecoration: 'none', fontSize: '14px' }}>{l}</a></li>
-                  ))}
-                </ul>
+              <div style={{ display: 'flex', gap: '12px', marginTop: '24px' }}>
+                <a href="#" style={{ width: '40px', height: '40px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(255, 255, 255, 0.05)', border: '1px solid var(--border-subtle)', borderRadius: '8px', color: 'var(--text-secondary)', textDecoration: 'none', fontSize: '18px', transition: 'all 0.3s ease' }}>𝕏</a>
+                <a href="#" style={{ width: '40px', height: '40px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(255, 255, 255, 0.05)', border: '1px solid var(--border-subtle)', borderRadius: '8px', color: 'var(--text-secondary)', textDecoration: 'none', fontSize: '18px', transition: 'all 0.3s ease' }}>in</a>
+                <a href="#" style={{ width: '40px', height: '40px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(255, 255, 255, 0.05)', border: '1px solid var(--border-subtle)', borderRadius: '8px', color: 'var(--text-secondary)', textDecoration: 'none', fontSize: '18px', transition: 'all 0.3s ease' }}>◉</a>
               </div>
-            ))}
+            </div>
+            <div>
+              <h4 style={{ fontSize: '14px', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '20px', color: 'var(--text-primary)' }}>Product</h4>
+              <ul style={{ listStyle: 'none', padding: 0 }}>
+                {['How It Works', 'Pricing', 'Features', 'Case Studies', 'API Access'].map((l, j) => (
+                  <li key={j} style={{ marginBottom: '12px' }}><a href="#" style={{ color: 'var(--text-secondary)', textDecoration: 'none', fontSize: '14px', transition: 'color 0.3s ease' }}>{l}</a></li>
+                ))}
+              </ul>
+            </div>
+            <div>
+              <h4 style={{ fontSize: '14px', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '20px', color: 'var(--text-primary)' }}>Resources</h4>
+              <ul style={{ listStyle: 'none', padding: 0 }}>
+                {['Documentation', 'Blog', 'Guides', 'Support Center', 'System Status'].map((l, j) => (
+                  <li key={j} style={{ marginBottom: '12px' }}><a href="#" style={{ color: 'var(--text-secondary)', textDecoration: 'none', fontSize: '14px', transition: 'color 0.3s ease' }}>{l}</a></li>
+                ))}
+              </ul>
+            </div>
+            <div>
+              <h4 style={{ fontSize: '14px', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '20px', color: 'var(--text-primary)' }}>Company</h4>
+              <ul style={{ listStyle: 'none', padding: 0 }}>
+                {['About Us', 'Careers', 'Contact', 'Partners', 'Affiliate Program'].map((l, j) => (
+                  <li key={j} style={{ marginBottom: '12px' }}><a href="#" style={{ color: 'var(--text-secondary)', textDecoration: 'none', fontSize: '14px', transition: 'color 0.3s ease' }}>{l}</a></li>
+                ))}
+              </ul>
+            </div>
+          </div>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '32px', marginBottom: '40px', padding: '24px', background: 'rgba(0, 0, 0, 0.3)', borderRadius: '12px', border: '1px solid var(--border-subtle)' }}>
+            <div style={{ display: 'flex', gap: '32px', flexWrap: 'wrap' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12px', color: 'var(--text-tertiary)' }}>
+                <span>🔒</span> SOC2 Certified
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12px', color: 'var(--text-tertiary)' }}>
+                <span>⚡</span> 99.9% Uptime
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12px', color: 'var(--text-tertiary)' }}>
+                <span>🌐</span> Global CDN
+              </div>
+            </div>
           </div>
           <div style={{ height: '1px', background: 'var(--border-subtle)', marginBottom: '40px' }} />
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '24px' }}>
             <div style={{ color: 'var(--text-tertiary)', fontSize: '14px' }}>© 2026 Trendwatcher Inc. All rights reserved.</div>
             <div style={{ display: 'flex', gap: '24px' }}>
-              <a href="#" style={{ color: 'var(--text-tertiary)', textDecoration: 'none', fontSize: '13px' }}>Privacy Policy</a>
-              <a href="#" style={{ color: 'var(--text-tertiary)', textDecoration: 'none', fontSize: '13px' }}>Terms of Service</a>
+              <a href="#" style={{ color: 'var(--text-tertiary)', textDecoration: 'none', fontSize: '13px', transition: 'color 0.3s ease' }}>Privacy Policy</a>
+              <a href="#" style={{ color: 'var(--text-tertiary)', textDecoration: 'none', fontSize: '13px', transition: 'color 0.3s ease' }}>Terms of Service</a>
             </div>
           </div>
         </div>
