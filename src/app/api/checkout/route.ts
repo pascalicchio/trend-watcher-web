@@ -17,14 +17,15 @@ export async function POST(request: Request) {
     const successUrl = `${appUrl}/pricing?success=true`;
     const cancelUrl = `${appUrl}/pricing?canceled=true`;
     
-    console.log('Creating session with URLs:', { successUrl, cancelUrl });
-    
+    console.log('Creating session...');
     const session = await createCheckoutSession(priceId, successUrl, cancelUrl);
+    console.log('Session created:', session.id);
     return NextResponse.json({ url: session.url });
   } catch (error: any) {
-    console.error('ERROR:', error.message);
+    console.error('FULL ERROR:', error);
+    console.error('ERROR STACK:', error.stack);
     return NextResponse.json(
-      { error: error.message || 'Failed to create checkout session' },
+      { error: error.message || 'Failed to create checkout session', stack: error.stack },
       { status: 500 }
     );
   }
