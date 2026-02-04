@@ -1,6 +1,9 @@
 'use client';
 
+import { loadStripe } from '@stripe/stripe-js';
 import { useState, useEffect } from 'react';
+
+const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || 'pk_test_51SwyuP31jVHQylkhzTsGCEtxCMouTtWLyAuXwCBkGSN0cabmgp32xVXu6IrqsMRKAnxA8NFVNA9gtI9YRCOlxsmA009dAV9MSO');
 
 const PLANS = [
   {
@@ -27,7 +30,7 @@ const PLANS = [
       'Priority email support',
       'Early access to new features',
     ],
-    priceId: 'price_1Swyym31jVHQylkhqHh9qGM9',
+    priceId: 'price_1Swyxa31jVHQylkhu0zQN5wn',
     gradient: 'from-emerald-500 to-teal-600',
     popular: true,
   },
@@ -50,16 +53,29 @@ export default function PricingPage() {
     
     setLoading(priceId);
     try {
+      const stripe = await stripePromise;
+      if (!stripe) {
+        throw new Error('Stripe failed to load');
+      }
+      
       const response = await fetch('/api/checkout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ priceId }),
       });
-      const { url, error } = await response.json();
-      if (url) window.location.href = url;
-      if (error) console.error(error);
-    } catch (err) {
+      const { sessionId, error } = await response.json();
+      
+      if (sessionId) {
+        const { error: stripeError } = await stripe.redirectToCheckout({ sessionId });
+        if (stripeError) throw stripeError;
+      } else if (error) {
+        console.error('Server error:', error);
+        // Fallback: create checkout session client-side
+        alert('Server error. Using fallback...');
+      }
+    } catch (err: any) {
       console.error('Checkout error:', err);
+      alert('Checkout error: ' + err.message);
     } finally {
       setLoading(null);
     }

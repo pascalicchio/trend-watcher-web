@@ -1,12 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createCheckoutSession } from '@/lib/stripe';
 
-export async function GET(request: NextRequest) {
-  return new NextResponse('{"test":"ok"}', {
-    headers: { 'Content-Type': 'application/json' },
-  });
-}
-
 export async function POST(request: NextRequest) {
   try {
     const { priceId } = await request.json();
@@ -23,7 +17,8 @@ export async function POST(request: NextRequest) {
     const session = await createCheckoutSession(priceId, successUrl, cancelUrl);
     console.log('Session created:', session.id);
     
-    return new NextResponse(JSON.stringify({ url: session.url }), {
+    // Return sessionId for client-side redirect
+    return new NextResponse(JSON.stringify({ sessionId: session.id, url: session.url }), {
       headers: { 'Content-Type': 'application/json' },
     });
   } catch (error: any) {
