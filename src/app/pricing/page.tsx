@@ -63,19 +63,16 @@ export default function PricingPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ priceId }),
       });
-      const { sessionId, error } = await response.json();
+      const { url, error } = await response.json();
       
-      if (sessionId) {
-        const { error: stripeError } = await stripe.redirectToCheckout({ sessionId });
-        if (stripeError) throw stripeError;
+      if (url) {
+        // New Stripe.js: use redirect option
+        await stripe.redirectToCheckout({ url });
       } else if (error) {
         console.error('Server error:', error);
-        // Fallback: create checkout session client-side
-        alert('Server error. Using fallback...');
       }
     } catch (err: any) {
       console.error('Checkout error:', err);
-      alert('Checkout error: ' + err.message);
     } finally {
       setLoading(null);
     }

@@ -17,8 +17,8 @@ export async function POST(request: NextRequest) {
     const session = await createCheckoutSession(priceId, successUrl, cancelUrl);
     console.log('Session created:', session.id);
     
-    // Return sessionId for client-side redirect
-    return new NextResponse(JSON.stringify({ sessionId: session.id, url: session.url }), {
+    // Return url for client-side redirect
+    return new NextResponse(JSON.stringify({ url: session.url }), {
       headers: { 'Content-Type': 'application/json' },
     });
   } catch (error: any) {
