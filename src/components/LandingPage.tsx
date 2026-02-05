@@ -120,8 +120,8 @@ const LandingPage: React.FC = () => {
                 <span className={styles.statusDot}></span>
                 <span className={styles.mono}>LIVE ENGINE</span>
               </div>
-              <a href="#login" className={`${styles.headerBtn} ${styles.headerBtnLogin}`}>Login</a>
-              <a href="#signup" className={`${styles.headerBtn} ${styles.headerBtnSignup}`}>
+              <a href="/login" className={`${styles.headerBtn} ${styles.headerBtnLogin}`}>Login</a>
+              <a href="/register" className={`${styles.headerBtn} ${styles.headerBtnSignup}`}>
                 Start Free Trial
                 <span>→</span>
               </a>
@@ -142,13 +142,13 @@ const LandingPage: React.FC = () => {
               </p>
               
               <div className={styles.ctaGroup}>
-                <button className={`${styles.btn} ${styles.btnPrimary}`}>
+                <a href="/register" className={`${styles.btn} ${styles.btnPrimary}`}>
                   Claim Your Seat
                   <span>→</span>
-                </button>
-                <button className={`${styles.btn} ${styles.btnSecondary}`}>
+                </a>
+                <a href="/dashboard" className={`${styles.btn} ${styles.btnSecondary}`}>
                   View Public Feed
-                </button>
+                </a>
               </div>
 
               <div className={styles.seatCounter}>
@@ -203,7 +203,7 @@ const LandingPage: React.FC = () => {
       </section>
 
       {/* Problem Section */}
-      <section className={styles.problemSection}>
+      <section id="how-it-works" className={styles.problemSection}>
         <div className={styles.container}>
           <div className={`${styles.sectionLabel} ${styles.mono}`}>THE ECHO CHAMBER</div>
           <h2 className={styles.sectionTitle}>You're fighting for scraps.</h2>
@@ -226,6 +226,49 @@ const LandingPage: React.FC = () => {
               <p className={styles.comparisonText}>
                 Detect spikes 48 hours early. First-mover advantage. Blue ocean. Profitable margins before saturation hits.
               </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Features Section */}
+      <section id="features" className={styles.featuresSection}>
+        <div className={styles.container}>
+          <div style={{ textAlign: 'center' }}>
+            <div className={`${styles.sectionLabel} ${styles.mono}`}>FEATURES</div>
+            <h2 className={styles.sectionTitle}>Everything you need to dominate e-commerce.</h2>
+          </div>
+
+          <div className={styles.featuresGrid}>
+            <div className={styles.featureCard}>
+              <div className={styles.featureIcon}>🎯</div>
+              <h3>Early Detection</h3>
+              <p>AI analyzes metadata to spot trends before they hit mainstream ad platforms.</p>
+            </div>
+            <div className={styles.featureCard}>
+              <div className={styles.featureIcon}>📊</div>
+              <h3>Velocity Scoring</h3>
+              <p>Proprietary algorithms score each trend's growth rate and market potential.</p>
+            </div>
+            <div className={styles.featureCard}>
+              <div className={styles.featureIcon}>🛡️</div>
+              <h3>Saturation Guard</h3>
+              <p>Avoid crowded markets with real-time saturation scoring.</p>
+            </div>
+            <div className={styles.featureCard}>
+              <div className={styles.featureIcon}>📝</div>
+              <h3>AI Content</h3>
+              <p>Get TikTok scripts, product descriptions, and ad copy instantly.</p>
+            </div>
+            <div className={styles.featureCard}>
+              <div className={styles.featureIcon}>🏭</div>
+              <h3>Supplier Sourcing</h3>
+              <p>Direct links to suppliers with pricing for trending products.</p>
+            </div>
+            <div className={styles.featureCard}>
+              <div className={styles.featureIcon}>📈</div>
+              <h3>Competitor Intel</h3>
+              <p>See what competitors are selling before they launch.</p>
             </div>
           </div>
         </div>
@@ -371,7 +414,7 @@ const LandingPage: React.FC = () => {
                 <li>Community access (read-only)</li>
               </ul>
 
-              <button className={`${styles.pricingCta} ${styles.btnSecondary}`}>Access Public Feed</button>
+              <a href="/dashboard" className={`${styles.pricingCta} ${styles.btnSecondary}`}>Access Public Feed</a>
             </div>
 
             <div className={`${styles.pricingCard} ${styles.featured}`}>
@@ -392,9 +435,9 @@ const LandingPage: React.FC = () => {
                 <li>Velocity + Saturation scoring</li>
               </ul>
 
-              <button className={`${styles.pricingCta} ${styles.btnPrimary}`}>
+              <a href="/register" className={`${styles.pricingCta} ${styles.btnPrimary}`}>
                 Start 2-Day Free Trial →
-              </button>
+              </a>
               <div style={{ textAlign: 'center', marginTop: '16px', fontSize: '13px', color: 'var(--text-tertiary)' }}>
                 💰 No winning product? Don't pay a cent.
               </div>
@@ -420,27 +463,27 @@ const LandingPage: React.FC = () => {
             <div className={styles.footerColumn}>
               <h4>Product</h4>
               <ul className={styles.footerLinks}>
-                <li><a href="#how-it-works">How It Works</a></li>
-                <li><a href="#pricing">Pricing</a></li>
-                <li><a href="#features">Features</a></li>
+                <li><a href="/#how-it-works">How It Works</a></li>
+                <li><a href="/pricing">Pricing</a></li>
+                <li><a href="/#features">Features</a></li>
               </ul>
             </div>
 
             <div className={styles.footerColumn}>
               <h4>Resources</h4>
               <ul className={styles.footerLinks}>
-                <li><a href="#docs">Documentation</a></li>
-                <li><a href="#blog">Blog</a></li>
-                <li><a href="#support">Support Center</a></li>
+                <li><a href="/blog">Blog</a></li>
+                <li><a href="/support">Support Center</a></li>
+                <li><a href="/docs">Documentation</a></li>
               </ul>
             </div>
 
             <div className={styles.footerColumn}>
               <h4>Company</h4>
               <ul className={styles.footerLinks}>
-                <li><a href="#about">About Us</a></li>
-                <li><a href="#contact">Contact</a></li>
-                <li><a href="#careers">Careers</a></li>
+                <li><a href="/about">About Us</a></li>
+                <li><a href="/contact">Contact</a></li>
+                <li><a href="/careers">Careers</a></li>
               </ul>
             </div>
           </div>
@@ -452,9 +495,9 @@ const LandingPage: React.FC = () => {
               © 2026 Trendwatcher Inc. All rights reserved.
             </div>
             <div className={styles.footerLegal}>
-              <a href="#privacy">Privacy Policy</a>
-              <a href="#terms">Terms of Service</a>
-              <a href="#security">Security</a>
+              <a href="/privacy">Privacy Policy</a>
+              <a href="/terms">Terms of Service</a>
+              <a href="/security">Security</a>
             </div>
           </div>
         </div>
