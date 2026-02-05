@@ -4,6 +4,9 @@ import { getTokenFromRequest, verifyToken } from '@/lib/auth';
 
 export async function GET(request: NextRequest) {
   try {
+    const { getDbInfo } = await import('@/lib/db');
+    console.log('[Profile] DB Provider:', getDbInfo().provider, 'URL:', getDbInfo().url);
+    
     const token = getTokenFromRequest(request);
     if (!token) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
