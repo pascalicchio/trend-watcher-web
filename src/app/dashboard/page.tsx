@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { usePathname } from 'next/navigation';
 
 interface User {
   id: string;
@@ -43,8 +44,10 @@ export default function DashboardOverview() {
   const [user, setUser] = useState<User | null>(null);
   const [cards, setCards] = useState<IntelligenceCard[]>([]);
   const [loading, setLoading] = useState(true);
+  const pathname = usePathname();
 
   useEffect(() => {
+    setLoading(true);
     async function fetchData() {
       try {
         // Add timestamp to force fresh data
@@ -56,6 +59,7 @@ export default function DashboardOverview() {
         const userData = await userRes.json();
         const cardsData = await cardsRes.json();
         
+        console.log('[Dashboard] User data:', userData.user);
         setUser(userData.user);
         setCards(cardsData.cards || []);
       } catch (error) {
@@ -65,7 +69,7 @@ export default function DashboardOverview() {
       }
     }
     fetchData();
-  }, []);
+  }, [pathname]);
 
   const latestCard = cards[0];
 
