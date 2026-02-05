@@ -19,11 +19,17 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const pathname = usePathname();
 
   useEffect(() => {
+    setLoading(true);
     async function fetchUser() {
-      setLoading(true);
       try {
-        // Add timestamp to force fresh data
-        const res = await fetch(`/api/users/profile?_=${Date.now()}`);
+        // Add timestamp and no-cache headers to force fresh data
+        const res = await fetch(`/api/users/profile?_=${Date.now()}`, {
+          headers: { 
+            'Cache-Control': 'no-cache, no-store, must-revalidate',
+            'Pragma': 'no-cache',
+            'Expires': '0'
+          }
+        });
         if (!res.ok) {
           router.push('/login');
           return;
