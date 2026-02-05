@@ -21,7 +21,8 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   useEffect(() => {
     async function fetchUser() {
       try {
-        const res = await fetch('/api/users/profile');
+        // Add timestamp to force fresh data
+        const res = await fetch(`/api/users/profile?_=${Date.now()}`);
         if (!res.ok) {
           router.push('/login');
           return;

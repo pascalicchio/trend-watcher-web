@@ -47,9 +47,10 @@ export default function DashboardOverview() {
   useEffect(() => {
     async function fetchData() {
       try {
+        // Add timestamp to force fresh data
         const [userRes, cardsRes] = await Promise.all([
-          fetch('/api/users/profile'),
-          fetch('/api/intelligence-cards')
+          fetch(`/api/users/profile?_=${Date.now()}`),
+          fetch(`/api/intelligence-cards?_=${Date.now()}`)
         ]);
         
         const userData = await userRes.json();
