@@ -204,13 +204,22 @@ export default function LoginPage() {
           fontSize: '14px',
           color: 'var(--text-secondary)'
         }}>
-          Don't have an account?{' '}
-          <Link href="/register" style={{
-            color: 'var(--accent-blue)',
+          <div style={{ marginBottom: '8px' }}>
+            Don't have an account?{' '}
+            <Link href="/register" style={{
+              color: 'var(--accent-blue)',
+              textDecoration: 'none',
+              fontWeight: '500'
+            }}>
+              Create one
+            </Link>
+          </div>
+          <Link href="/forgot-password" style={{
+            color: 'var(--text-tertiary)',
             textDecoration: 'none',
-            fontWeight: '500'
+            fontSize: '13px'
           }}>
-            Create one
+            Forgot password?
           </Link>
         </div>
       </div>
