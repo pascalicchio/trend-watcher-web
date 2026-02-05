@@ -231,6 +231,18 @@ export const db = {
       const data = readFileDB();
       return data.intelligence_cards.filter((c: IntelligenceCard) => c.user_id === userId);
     },
+    findAll: async (): Promise<IntelligenceCard[]> => {
+      if (useSupabase) {
+        const { data } = await supabase!.from('intelligence_cards')
+          .select('*')
+          .order('created_at', { ascending: false });
+        return data || [];
+      }
+      const data = readFileDB();
+      return data.intelligence_cards.sort((a: IntelligenceCard, b: IntelligenceCard) => 
+        new Date(b.created_at || 0).getTime() - new Date(a.created_at || 0).getTime()
+      );
+    },
     create: async (card: IntelligenceCard): Promise<IntelligenceCard> => {
       if (useSupabase) {
         const { data, error } = await supabase!.from('intelligence_cards').insert(card).select().single();
