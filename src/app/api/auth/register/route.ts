@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { db } from '@/lib/db';
+import { db, getDbInfo } from '@/lib/db';
 import { createToken, setAuthCookie } from '@/lib/auth';
 
 export async function POST(request: NextRequest) {
@@ -12,6 +12,10 @@ export async function POST(request: NextRequest) {
         { status: 400 }
       );
     }
+    
+    const dbInfo = getDbInfo();
+    console.log('[Register] Using DB provider:', dbInfo.provider);
+    console.log('[Register] DB URL:', dbInfo.url ? 'set' : 'NOT SET');
     
     const existingUser = await db.users.findByEmail(email);
     if (existingUser) {
@@ -29,6 +33,8 @@ export async function POST(request: NextRequest) {
       subscription: 'free',
       stripe_customer_id: null
     });
+    
+    console.log('[Register] User created:', user.id);
     
     const token = await createToken({
       id: user.id,
@@ -50,10 +56,10 @@ export async function POST(request: NextRequest) {
     response.headers.set('Set-Cookie', setAuthCookie(token));
     
     return response;
-  } catch (error) {
-    console.error('Registration error:', error);
+  } catch (error: any) {
+    console.error('[Register] Error:', error.message);
     return NextResponse.json(
-      { error: 'Registration failed' },
+      { error: 'Registration failed: ' + error.message },
       { status: 500 }
     );
   }
