@@ -1,143 +1,247 @@
-// Simple JSON-based database for TrendWatcher
-// Replace with real database (PostgreSQL, MongoDB, etc.) in production
+// Database abstraction layer for TrendWatcher
+// Supports both file-based (dev) and Supabase (production)
 
+import { createClient, SupabaseClient } from '@supabase/supabase-js';
+
+// Types
+export interface User {
+  id: string;
+  email: string;
+  password?: string;
+  name?: string;
+  role: 'user' | 'admin';
+  subscription: 'free' | 'inner-circle';
+  stripe_customer_id?: string;
+  reset_token?: string;
+  reset_token_expires?: string;
+  created_at?: string;
+  updated_at?: string;
+}
+
+export interface Subscription {
+  id: string;
+  user_id: string;
+  plan: string;
+  stripe_payment_id?: string;
+  status: string;
+  start_date?: string;
+  end_date?: string;
+  created_at?: string;
+}
+
+export interface Report {
+  id: string;
+  user_id: string;
+  type: string;
+  title: string;
+  content?: any;
+  data?: any;
+  status: string;
+  created_at?: string;
+}
+
+export interface IntelligenceCard {
+  id: string;
+  user_id: string;
+  data: any;
+  created_at?: string;
+}
+
+// Supabase client (undefined if env vars not set)
+const supabaseUrl = process.env.SUPABASE_URL;
+const supabaseAnonKey = process.env.SUPABASE_ANON_KEY;
+
+export const supabase: SupabaseClient | null = 
+  supabaseUrl && supabaseAnonKey 
+    ? createClient(supabaseUrl, supabaseAnonKey)
+    : null;
+
+const useSupabase = !!supabase;
+
+// File-based DB (fallback for development)
 import fs from 'fs';
 import path from 'path';
 
 const DB_PATH = path.join(process.cwd(), 'data', 'db.json');
 
-// Ensure data directory exists
-const dataDir = path.dirname(DB_PATH);
-if (!fs.existsSync(dataDir)) {
-  fs.mkdirSync(dataDir, { recursive: true });
-}
-
-// Initialize database if it doesn't exist
-if (!fs.existsSync(DB_PATH)) {
-  const initialData = {
-    users: [],
-    subscriptions: [],
-    reports: [],
-    intelligenceCards: []
-  };
-  fs.writeFileSync(DB_PATH, JSON.stringify(initialData, null, 2));
-}
-
-function readDB(): any {
-  try {
-    return JSON.parse(fs.readFileSync(DB_PATH, 'utf-8'));
-  } catch {
-    return { users: [], subscriptions: [], reports: [], intelligenceCards: [] };
+function ensureDataDir() {
+  const dataDir = path.dirname(DB_PATH);
+  if (!fs.existsSync(dataDir)) {
+    fs.mkdirSync(dataDir, { recursive: true });
   }
 }
 
-function writeDB(data: any): void {
+function readFileDB(): any {
+  ensureDataDir();
+  try {
+    return JSON.parse(fs.readFileSync(DB_PATH, 'utf-8'));
+  } catch {
+    return { users: [], subscriptions: [], reports: [], intelligence_cards: [] };
+  }
+}
+
+function writeFileDB(data: any) {
+  ensureDataDir();
   fs.writeFileSync(DB_PATH, JSON.stringify(data, null, 2));
 }
 
-// User operations
+// Database operations
 export const db = {
+  // Users
   users: {
-    findByEmail: (email: string) => {
-      const data = readDB();
-      return data.users.find((u: any) => u.email === email);
+    findByEmail: async (email: string): Promise<User | null> => {
+      if (useSupabase) {
+        const { data } = await supabase!.from('users').select('*').eq('email', email).single();
+        return data;
+      }
+      const data = readFileDB();
+      return data.users.find((u: User) => u.email === email);
     },
-    findById: (id: string) => {
-      const data = readDB();
-      return data.users.find((u: any) => u.id === id);
+    findById: async (id: string): Promise<User | null> => {
+      if (useSupabase) {
+        const { data } = await supabase!.from('users').select('*').eq('id', id).single();
+        return data;
+      }
+      const data = readFileDB();
+      return data.users.find((u: User) => u.id === id);
     },
-    create: (user: any) => {
-      const data = readDB();
+    create: async (user: User): Promise<User> => {
+      if (useSupabase) {
+        const { data, error } = await supabase!.from('users').insert(user).select().single();
+        if (error) throw error;
+        return data;
+      }
+      const data = readFileDB();
       user.id = user.id || crypto.randomUUID();
-      user.createdAt = new Date().toISOString();
-      user.updatedAt = new Date().toISOString();
+      user.created_at = new Date().toISOString();
+      user.updated_at = new Date().toISOString();
       data.users.push(user);
-      writeDB(data);
+      writeFileDB(data);
       return user;
     },
-    update: (id: string, updates: any) => {
-      const data = readDB();
-      const index = data.users.findIndex((u: any) => u.id === id);
+    update: async (id: string, updates: Partial<User>): Promise<User | null> => {
+      if (useSupabase) {
+        const { data, error } = await supabase!.from('users')
+          .update({ ...updates, updated_at: new Date().toISOString() })
+          .eq('id', id).select().single();
+        if (error) return null;
+        return data;
+      }
+      const data = readFileDB();
+      const index = data.users.findIndex((u: User) => u.id === id);
       if (index !== -1) {
-        data.users[index] = { ...data.users[index], ...updates, updatedAt: new Date().toISOString() };
-        writeDB(data);
+        data.users[index] = { ...data.users[index], ...updates, updated_at: new Date().toISOString() };
+        writeFileDB(data);
         return data.users[index];
       }
       return null;
     },
-    updateSubscription: (id: string, subscription: any) => {
-      const data = readDB();
-      const index = data.users.findIndex((u: any) => u.id === id);
-      if (index !== -1) {
-        data.users[index].subscription = subscription;
-        data.users[index].updatedAt = new Date().toISOString();
-        writeDB(data);
-        return data.users[index];
-      }
-      return null;
+    updateSubscription: async (id: string, subscription: string): Promise<User | null> => {
+      return db.users.update(id, { subscription: subscription as 'free' | 'inner-circle' });
     }
   },
-  
+
+  // Subscriptions
   subscriptions: {
-    findByUserId: (userId: string) => {
-      const data = readDB();
-      return data.subscriptions.filter((s: any) => s.userId === userId);
-    },
-    create: (subscription: any) => {
-      const data = readDB();
-      subscription.id = subscription.id || crypto.randomUUID();
-      subscription.createdAt = new Date().toISOString();
-      data.subscriptions.push(subscription);
-      writeDB(data);
-      return subscription;
-    },
-    update: (id: string, updates: any) => {
-      const data = readDB();
-      const index = data.subscriptions.findIndex((s: any) => s.id === id);
-      if (index !== -1) {
-        data.subscriptions[index] = { ...data.subscriptions[index], ...updates };
-        writeDB(data);
-        return data.subscriptions[index];
+    findByUserId: async (userId: string): Promise<Subscription[]> => {
+      if (useSupabase) {
+        const { data } = await supabase!.from('subscriptions').select('*').eq('user_id', userId);
+        return data || [];
       }
-      return null;
+      const data = readFileDB();
+      return data.subscriptions.filter((s: Subscription) => s.user_id === userId);
+    },
+    create: async (subscription: Subscription): Promise<Subscription> => {
+      if (useSupabase) {
+        const { data, error } = await supabase!.from('subscriptions').insert(subscription).select().single();
+        if (error) throw error;
+        return data;
+      }
+      const data = readFileDB();
+      subscription.id = subscription.id || crypto.randomUUID();
+      subscription.created_at = new Date().toISOString();
+      data.subscriptions.push(subscription);
+      writeFileDB(data);
+      return subscription;
     }
   },
-  
+
+  // Reports
   reports: {
-    findByUserId: (userId: string) => {
-      const data = readDB();
-      return data.reports.filter((r: any) => r.userId === userId).sort((a: any, b: any) => 
-        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+    findByUserId: async (userId: string): Promise<Report[]> => {
+      if (useSupabase) {
+        const { data } = await supabase!.from('reports')
+          .select('*')
+          .eq('user_id', userId)
+          .order('created_at', { ascending: false });
+        return data || [];
+      }
+      const data = readFileDB();
+      return data.reports
+        .filter((r: Report) => r.user_id === userId)
+        .sort((a: Report, b: Report) => 
+          new Date(b.created_at || 0).getTime() - new Date(a.created_at || 0).getTime()
+        );
+    },
+    findAll: async (): Promise<Report[]> => {
+      if (useSupabase) {
+        const { data } = await supabase!.from('reports')
+          .select('*')
+          .order('created_at', { ascending: false });
+        return data || [];
+      }
+      const data = readFileDB();
+      return data.reports.sort((a: Report, b: Report) => 
+        new Date(b.created_at || 0).getTime() - new Date(a.created_at || 0).getTime()
       );
     },
-    findAll: () => {
-      const data = readDB();
-      return data.reports.sort((a: any, b: any) => 
-        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-      );
-    },
-    create: (report: any) => {
-      const data = readDB();
+    create: async (report: Report): Promise<Report> => {
+      if (useSupabase) {
+        const { data, error } = await supabase!.from('reports').insert(report).select().single();
+        if (error) throw error;
+        return data;
+      }
+      const data = readFileDB();
       report.id = report.id || crypto.randomUUID();
-      report.createdAt = new Date().toISOString();
+      report.created_at = new Date().toISOString();
       data.reports.push(report);
-      writeDB(data);
+      writeFileDB(data);
       return report;
     }
   },
-  
+
+  // Intelligence Cards
   intelligenceCards: {
-    findByUserId: (userId: string) => {
-      const data = readDB();
-      return data.intelligenceCards.filter((c: any) => c.userId === userId);
+    findByUserId: async (userId: string): Promise<IntelligenceCard[]> => {
+      if (useSupabase) {
+        const { data } = await supabase!.from('intelligence_cards')
+          .select('*')
+          .eq('user_id', userId)
+          .order('created_at', { ascending: false });
+        return data || [];
+      }
+      const data = readFileDB();
+      return data.intelligence_cards.filter((c: IntelligenceCard) => c.user_id === userId);
     },
-    create: (card: any) => {
-      const data = readDB();
+    create: async (card: IntelligenceCard): Promise<IntelligenceCard> => {
+      if (useSupabase) {
+        const { data, error } = await supabase!.from('intelligence_cards').insert(card).select().single();
+        if (error) throw error;
+        return data;
+      }
+      const data = readFileDB();
       card.id = card.id || crypto.randomUUID();
-      card.createdAt = new Date().toISOString();
-      data.intelligenceCards.push(card);
-      writeDB(data);
+      card.created_at = new Date().toISOString();
+      data.intelligence_cards.push(card);
+      writeFileDB(data);
       return card;
     }
   }
 };
+
+// Export for debugging
+export const getDbInfo = () => ({
+  provider: useSupabase ? 'supabase' : 'file',
+  url: supabaseUrl || null,
+  path: useSupabase ? null : DB_PATH
+});
