@@ -1,0 +1,60 @@
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- Background gradient -->
+    <linearGradient id="bgGrad" x1="0" y1="0" x2="512" y2="512" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#0a0e1a"/>
+      <stop offset="100%" stop-color="#141a2e"/>
+    </linearGradient>
+    
+    <!-- Brand gradient (cyan to green) -->
+    <linearGradient id="brandGrad" x1="100" y1="380" x2="420" y2="100" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#00C9FF"/>
+      <stop offset="100%" stop-color="#92FE9D"/>
+    </linearGradient>
+    
+    <!-- Glow filter -->
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="8"/>
+    </filter>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="512" height="512" rx="100" fill="url(#bgGrad)"/>
+  
+  <!-- Glow effect behind trend line -->
+  <path d="M 100 380 L 180 280 L 260 300 L 340 180 L 420 100" 
+        stroke="url(#brandGrad)" 
+        stroke-width="45" 
+        stroke-linecap="round" 
+        stroke-linejoin="round" 
+        fill="none"
+        opacity="0.3"
+        filter="url(#glow)"/>
+  
+  <!-- Main trend line -->
+  <path d="M 100 380 L 180 280 L 260 300 L 340 180 L 420 100" 
+        stroke="url(#brandGrad)" 
+        stroke-width="28" 
+        stroke-linecap="round" 
+        stroke-linejoin="round" 
+        fill="none"/>
+  
+  <!-- Arrow head -->
+  <path d="M 380 100 L 420 100 L 420 140" 
+        stroke="url(#brandGrad)" 
+        stroke-width="28" 
+        stroke-linecap="round" 
+        stroke-linejoin="round" 
+        fill="none"/>
+  
+  <!-- Data points -->
+  <circle cx="100" cy="380" r="16" fill="#fff" opacity="0.95"/>
+  <circle cx="180" cy="280" r="16" fill="#fff" opacity="0.95"/>
+  <circle cx="260" cy="300" r="16" fill="#fff" opacity="0.95"/>
+  <circle cx="340" cy="180" r="16" fill="#fff" opacity="0.95"/>
+  <circle cx="420" cy="100" r="16" fill="#92FE9D" opacity="1"/>
+  
+  <!-- Pulse ring at endpoint -->
+  <circle cx="420" cy="100" r="30" stroke="#92FE9D" stroke-width="2" fill="none" opacity="0.4"/>
+  <circle cx="420" cy="100" r="45" stroke="#92FE9D" stroke-width="1" fill="none" opacity="0.2"/>
+</svg>
