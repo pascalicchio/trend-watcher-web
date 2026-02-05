@@ -26,6 +26,7 @@ interface IntelligenceCard {
       priceRange: string;
       emoji: string;
       recommendation: string;
+      platform?: string;
     }>;
     hnTrends: Array<{
       title: string;
