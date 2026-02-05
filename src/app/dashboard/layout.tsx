@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import Link from 'next/link';
 
 interface User {
@@ -16,6 +16,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
+  const pathname = usePathname();
 
   useEffect(() => {
     async function fetchUser() {
@@ -58,6 +59,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     );
   }
 
+  // Build nav items based on user role
   const navItems = [
     { href: '/dashboard', label: 'Overview', icon: '📊' },
     { href: '/dashboard/reports', label: 'Reports', icon: '📋' },
@@ -110,44 +112,74 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           }}>
             <div style={{ fontSize: '14px', fontWeight: '600', marginBottom: '4px' }}>{user.name}</div>
             <div style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>{user.email}</div>
-            <div style={{
-              display: 'inline-block',
-              marginTop: '8px',
-              padding: '4px 10px',
-              background: user.subscription === 'inner-circle' ? 'var(--gradient-1)' : 'rgba(255, 255, 255, 0.1)',
-              borderRadius: '20px',
-              fontSize: '11px',
-              fontWeight: '600',
-              color: user.subscription === 'inner-circle' ? 'var(--bg-primary)' : 'var(--text-secondary)'
-            }}>
-              {user.subscription === 'inner-circle' ? 'INNER CIRCLE' : 'FREE'}
+            <div style={{ display: 'flex', gap: '8px', marginTop: '8px', flexWrap: 'wrap' }}>
+              {user.subscription === 'inner-circle' ? (
+                <span style={{
+                  padding: '4px 10px',
+                  background: 'var(--gradient-1)',
+                  borderRadius: '20px',
+                  fontSize: '11px',
+                  fontWeight: '600',
+                  color: 'var(--bg-primary)'
+                }}>
+                  INNER CIRCLE
+                </span>
+              ) : (
+                <span style={{
+                  padding: '4px 10px',
+                  background: 'rgba(255, 255, 255, 0.1)',
+                  borderRadius: '20px',
+                  fontSize: '11px',
+                  fontWeight: '600',
+                  color: 'var(--text-secondary)'
+                }}>
+                  FREE
+                </span>
+              )}
+              {user.role === 'admin' && (
+                <span style={{
+                  padding: '4px 10px',
+                  background: 'rgba(252, 70, 107, 0.2)',
+                  borderRadius: '20px',
+                  fontSize: '11px',
+                  fontWeight: '600',
+                  color: 'var(--accent-pink)'
+                }}>
+                  ADMIN
+                </span>
+              )}
             </div>
           </div>
         )}
 
         {/* Navigation */}
         <nav style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-          {navItems.map((item) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '12px',
-                padding: '12px 16px',
-                borderRadius: '8px',
-                color: 'var(--text-secondary)',
-                textDecoration: 'none',
-                fontSize: '14px',
-                fontWeight: '500',
-                transition: 'all 0.2s'
-              }}
-            >
-              <span style={{ fontSize: '18px' }}>{item.icon}</span>
-              {item.label}
-            </Link>
-          ))}
+          {navItems.map((item) => {
+            const isActive = pathname === item.href;
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '12px',
+                  padding: '12px 16px',
+                  borderRadius: '8px',
+                  color: isActive ? 'var(--text-primary)' : 'var(--text-secondary)',
+                  textDecoration: 'none',
+                  fontSize: '14px',
+                  fontWeight: isActive ? '600' : '500',
+                  background: isActive ? 'rgba(0, 201, 255, 0.15)' : 'transparent',
+                  border: isActive ? '1px solid var(--accent-blue)' : '1px solid transparent',
+                  transition: 'all 0.2s'
+                }}
+              >
+                <span style={{ fontSize: '18px' }}>{item.icon}</span>
+                {item.label}
+              </Link>
+            );
+          })}
         </nav>
 
         {/* Logout */}
