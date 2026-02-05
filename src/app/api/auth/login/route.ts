@@ -13,7 +13,7 @@ export async function POST(request: NextRequest) {
       );
     }
     
-    const user = db.users.findByEmail(email);
+    const user = await db.users.findByEmail(email);
     
     if (!user || user.password !== password) {
       return NextResponse.json(

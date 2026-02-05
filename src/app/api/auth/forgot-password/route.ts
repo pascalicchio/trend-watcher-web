@@ -12,7 +12,7 @@ export async function POST(request: NextRequest) {
       );
     }
     
-    const user = db.users.findByEmail(email);
+    const user = await db.users.findByEmail(email);
     
     if (!user) {
       // Don't reveal if user exists
@@ -27,9 +27,9 @@ export async function POST(request: NextRequest) {
     const expiresAt = new Date(Date.now() + 60 * 60 * 1000).toISOString();
     
     // Store reset token in user record
-    db.users.update(user.id, {
-      resetToken,
-      resetTokenExpires: expiresAt
+    await db.users.update(user.id, {
+      reset_token: resetToken,
+      reset_token_expires: expiresAt
     });
     
     // In production, send email via SendGrid

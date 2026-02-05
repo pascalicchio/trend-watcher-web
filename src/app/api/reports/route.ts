@@ -18,8 +18,8 @@ export async function GET(request: NextRequest) {
     const isAdmin = payload.role === 'admin';
     
     const reports = isAdmin 
-      ? db.reports.findAll()
-      : db.reports.findByUserId(payload.id);
+      ? await db.reports.findAll()
+      : await db.reports.findByUserId(payload.id);
     
     return NextResponse.json({ reports });
   } catch (error) {
@@ -42,8 +42,8 @@ export async function POST(request: NextRequest) {
     
     const data = await request.json();
     
-    const report = db.reports.create({
-      userId: payload.id,
+    const report = await db.reports.create({
+      user_id: payload.id,
       type: data.type || 'intelligence-card',
       title: data.title,
       content: data.content,

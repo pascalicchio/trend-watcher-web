@@ -14,7 +14,7 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Invalid token' }, { status: 401 });
     }
     
-    const user = db.users.findById(payload.id);
+    const user = await db.users.findById(payload.id);
     if (!user) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
@@ -26,7 +26,7 @@ export async function GET(request: NextRequest) {
         name: user.name,
         role: user.role,
         subscription: user.subscription,
-        createdAt: user.createdAt
+        created_at: user.created_at
       }
     });
   } catch (error) {
@@ -48,7 +48,7 @@ export async function PUT(request: NextRequest) {
     }
     
     const updates = await request.json();
-    const updatedUser = db.users.update(payload.id, updates);
+    const updatedUser = await db.users.update(payload.id, updates);
     
     if (!updatedUser) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });

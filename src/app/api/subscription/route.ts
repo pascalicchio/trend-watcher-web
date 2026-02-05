@@ -14,8 +14,8 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Invalid token' }, { status: 401 });
     }
     
-    const subscriptions = db.subscriptions.findByUserId(payload.id);
-    const user = db.users.findById(payload.id);
+    const subscriptions = await db.subscriptions.findByUserId(payload.id);
+    const user = await db.users.findById(payload.id);
     
     return NextResponse.json({
       subscription: {
@@ -45,17 +45,17 @@ export async function POST(request: NextRequest) {
     const { plan, stripePaymentId } = await request.json();
     
     // Create subscription record
-    const subscription = db.subscriptions.create({
-      userId: payload.id,
+    const subscription = await db.subscriptions.create({
+      user_id: payload.id,
       plan,
-      stripePaymentId,
+      stripe_payment_id: stripePaymentId,
       status: 'active',
-      startDate: new Date().toISOString(),
-      endDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString()
+      start_date: new Date().toISOString(),
+      end_date: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString()
     });
     
     // Update user subscription
-    db.users.updateSubscription(payload.id, plan);
+    await db.users.updateSubscription(payload.id, plan);
     
     return NextResponse.json({
       success: true,

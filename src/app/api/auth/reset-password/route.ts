@@ -20,8 +20,7 @@ export async function POST(request: NextRequest) {
     }
     
     // Find user with this reset token
-    const users = db.users.findAll?.() || [];
-    const user = users.find((u: any) => u.resetToken === token);
+    const user = await db.users.findByResetToken(token);
     
     if (!user) {
       return NextResponse.json(
@@ -31,7 +30,7 @@ export async function POST(request: NextRequest) {
     }
     
     // Check if token expired
-    if (user.resetTokenExpires && new Date(user.resetTokenExpires) < new Date()) {
+    if (user.reset_token_expires && new Date(user.reset_token_expires) < new Date()) {
       return NextResponse.json(
         { error: 'Reset token has expired' },
         { status: 400 }
@@ -39,10 +38,10 @@ export async function POST(request: NextRequest) {
     }
     
     // Update password and clear reset token
-    db.users.update(user.id, {
+    await db.users.update(user.id, {
       password,
-      resetToken: null,
-      resetTokenExpires: null
+      reset_token: null,
+      reset_token_expires: null
     });
     
     return NextResponse.json({
@@ -55,18 +54,5 @@ export async function POST(request: NextRequest) {
       { error: 'Failed to reset password' },
       { status: 500 }
     );
-  }
-}
-
-// Helper to find all users (since db doesn't export this)
-function findAllUsers() {
-  try {
-    const fs = require('fs');
-    const path = require('path');
-    const dbPath = path.join(process.cwd(), 'data', 'db.json');
-    const data = JSON.parse(fs.readFileSync(dbPath, 'utf-8'));
-    return data.users || [];
-  } catch {
-    return [];
   }
 }

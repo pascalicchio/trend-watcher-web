@@ -13,7 +13,7 @@ export async function POST(request: NextRequest) {
       );
     }
     
-    const existingUser = db.users.findByEmail(email);
+    const existingUser = await db.users.findByEmail(email);
     if (existingUser) {
       return NextResponse.json(
         { error: 'Email already registered' },
@@ -21,13 +21,13 @@ export async function POST(request: NextRequest) {
       );
     }
     
-    const user = db.users.create({
+    const user = await db.users.create({
       email,
       password,
       name: name || email.split('@')[0],
       role: 'user',
       subscription: 'free',
-      stripeCustomerId: null
+      stripe_customer_id: null
     });
     
     const token = await createToken({

@@ -5,7 +5,7 @@ import { createClient, SupabaseClient } from '@supabase/supabase-js';
 
 // Types
 export interface User {
-  id: string;
+  id?: string;
   email: string;
   password?: string;
   name?: string;
@@ -19,29 +19,29 @@ export interface User {
 }
 
 export interface Subscription {
-  id: string;
+  id?: string;
   user_id: string;
   plan: string;
   stripe_payment_id?: string;
-  status: string;
+  status?: string;
   start_date?: string;
   end_date?: string;
   created_at?: string;
 }
 
 export interface Report {
-  id: string;
+  id?: string;
   user_id: string;
   type: string;
   title: string;
   content?: any;
   data?: any;
-  status: string;
+  status?: string;
   created_at?: string;
 }
 
 export interface IntelligenceCard {
-  id: string;
+  id?: string;
   user_id: string;
   data: any;
   created_at?: string;
@@ -138,6 +138,14 @@ export const db = {
     },
     updateSubscription: async (id: string, subscription: string): Promise<User | null> => {
       return db.users.update(id, { subscription: subscription as 'free' | 'inner-circle' });
+    },
+    findByResetToken: async (token: string): Promise<User | null> => {
+      if (useSupabase) {
+        const { data } = await supabase!.from('users').select('*').eq('reset_token', token).single();
+        return data;
+      }
+      const data = readFileDB();
+      return data.users.find((u: User) => u.reset_token === token);
     }
   },
 
