@@ -14,6 +14,7 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Invalid token' }, { status: 401 });
     }
     
+    // Force fresh fetch from Supabase
     const user = await db.users.findById(payload.id);
     if (!user) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
@@ -28,6 +29,8 @@ export async function GET(request: NextRequest) {
         subscription: user.subscription,
         created_at: user.created_at
       }
+    }, {
+      headers: { 'Cache-Control': 'no-store' }
     });
   } catch (error) {
     console.error('Get profile error:', error);

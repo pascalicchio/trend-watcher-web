@@ -13,6 +13,7 @@ export async function POST(request: NextRequest) {
       );
     }
     
+    // Force fresh fetch from Supabase
     const user = await db.users.findByEmail(email);
     
     if (!user || user.password !== password) {
@@ -29,6 +30,7 @@ export async function POST(request: NextRequest) {
       subscription: user.subscription || 'free'
     });
     
+    // Set no-cache headers to force fresh session
     const response = NextResponse.json({
       user: {
         id: user.id,
@@ -40,6 +42,7 @@ export async function POST(request: NextRequest) {
     });
     
     response.headers.set('Set-Cookie', setAuthCookie(token));
+    response.headers.set('Cache-Control', 'no-store, no-cache, must-revalidate');
     
     return response;
   } catch (error) {
