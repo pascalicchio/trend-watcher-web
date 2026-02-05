@@ -20,6 +20,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
   useEffect(() => {
     async function fetchUser() {
+      setLoading(true);
       try {
         // Add timestamp to force fresh data
         const res = await fetch(`/api/users/profile?_=${Date.now()}`);
@@ -36,7 +37,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       }
     }
     fetchUser();
-  }, [router]);
+  }, [router, pathname]);
 
   if (loading) {
     return (
