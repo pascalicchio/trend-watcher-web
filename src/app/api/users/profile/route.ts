@@ -14,8 +14,12 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Invalid token' }, { status: 401 });
     }
     
+    console.log('[Profile] Token payload:', payload);
+    
     // Force fresh fetch from Supabase
     const user = await db.users.findById(payload.id);
+    console.log('[Profile] DB result:', user);
+    
     if (!user) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
@@ -30,7 +34,7 @@ export async function GET(request: NextRequest) {
         created_at: user.created_at
       }
     }, {
-      headers: { 'Cache-Control': 'no-store' }
+      headers: { 'Cache-Control': 'no-store, no-cache, must-revalidate' }
     });
   } catch (error) {
     console.error('Get profile error:', error);
