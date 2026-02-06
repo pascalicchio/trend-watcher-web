@@ -1,0 +1,165 @@
+.page {
+  min-height: 100vh;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+.header {
+  padding: 20px 0;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.header .container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logo {
+  font-size: 20px;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.logoTrend {
+  color: var(--accent-purple);
+}
+
+.logoWatcher {
+  color: var(--text-primary);
+}
+
+.nav {
+  display: flex;
+  gap: 24px;
+  align-items: center;
+}
+
+.nav a {
+  color: var(--text-secondary);
+  text-decoration: none;
+  font-size: 14px;
+}
+
+.nav a:hover {
+  color: var(--text-primary);
+}
+
+.cta {
+  background: var(--gradient-1);
+  color: white !important;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-weight: 600;
+}
+
+.main {
+  padding: 80px 0;
+}
+
+.article {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+.articleHeader {
+  margin-bottom: 48px;
+  text-align: center;
+}
+
+.meta {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  margin-bottom: 24px;
+}
+
+.category {
+  background: rgba(139, 92, 246, 0.2);
+  color: var(--accent-purple);
+  padding: 4px 12px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.date {
+  color: var(--text-tertiary);
+  font-size: 14px;
+  padding-top: 4px;
+}
+
+.articleHeader h1 {
+  font-size: 42px;
+  font-weight: 700;
+  margin: 0 0 16px;
+  background: var(--gradient-1);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  line-height: 1.2;
+}
+
+.excerpt {
+  font-size: 20px;
+  color: var(--text-secondary);
+  margin: 0;
+  line-height: 1.5;
+}
+
+.content {
+  font-size: 16px;
+  line-height: 1.8;
+  color: var(--text-secondary);
+}
+
+.content h4 {
+  font-size: 18px;
+  color: var(--text-primary);
+  margin: 32px 0 12px;
+}
+
+.content p {
+  margin: 0 0 16px;
+}
+
+.content ul {
+  margin: 0 0 24px;
+  padding-left: 24px;
+}
+
+.content li {
+  margin-bottom: 8px;
+}
+
+.articleFooter {
+  margin-top: 48px;
+  padding-top: 32px;
+  border-top: 1px solid var(--border-subtle);
+}
+
+.backLink {
+  color: var(--accent-purple);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.backLink:hover {
+  text-decoration: underline;
+}
+
+@media (max-width: 768px) {
+  .articleHeader h1 {
+    font-size: 32px;
+  }
+  
+  .excerpt {
+    font-size: 16px;
+  }
+}
