@@ -1,5 +1,6 @@
 import { Metadata } from 'next';
 import styles from './terms.module.css';
+import Footer from '@/components/Footer';
 
 export const metadata: Metadata = {
   title: 'Terms of Service | Trendwatcher',
@@ -84,13 +85,7 @@ export default function TermsPage() {
         </div>
       </main>
 
-      <footer className={styles.footer}>
-        <div className={styles.container}>
-          <div className={styles.footerContainer}>
-            <p className={styles.footerText}>© 2026 Trendwatcher Inc. All rights reserved.</p>
-          </div>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 }

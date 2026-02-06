@@ -1,5 +1,6 @@
 import { Metadata } from 'next';
 import styles from './privacy.module.css';
+import Footer from '@/components/Footer';
 
 export const metadata: Metadata = {
   title: 'Privacy Policy | Trendwatcher',
@@ -82,13 +83,7 @@ export default function PrivacyPage() {
         </div>
       </main>
 
-      <footer className={styles.footer}>
-        <div className={styles.container}>
-          <div className={styles.footerContainer}>
-            <p className={styles.footerText}>© 2026 Trendwatcher Inc. All rights reserved.</p>
-          </div>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 }

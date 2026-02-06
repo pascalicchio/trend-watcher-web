@@ -464,7 +464,7 @@ const LandingPage: React.FC = () => {
               <h4>Product</h4>
               <ul className={styles.footerLinks}>
                 <li><a href="/#how-it-works">How It Works</a></li>
-                <li><a href="/pricing">Pricing</a></li>
+                <li><a href="/#pricing">Pricing</a></li>
                 <li><a href="/#features">Features</a></li>
               </ul>
             </div>

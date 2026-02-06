@@ -1,5 +1,6 @@
 import { Metadata } from 'next';
-import styles from './page.module.css';
+import styles from './docs.module.css';
+import Footer from '@/components/Footer';
 
 export const metadata: Metadata = {
   title: 'Documentation | Trendwatcher',
@@ -51,11 +52,7 @@ export default function DocsPage() {
         </div>
       </main>
 
-      <footer className={styles.footer}>
-        <div className={styles.container}>
-          <p>© 2026 Trendwatcher Inc. All rights reserved.</p>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 }

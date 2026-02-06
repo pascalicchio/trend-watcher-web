@@ -1,5 +1,6 @@
 import { Metadata } from 'next';
 import styles from './support.module.css';
+import Footer from '@/components/Footer';
 
 export const metadata: Metadata = {
   title: 'Support Center | Trendwatcher',
@@ -92,15 +93,7 @@ export default function SupportPage() {
         </div>
       </main>
 
-      <footer className={styles.footer}>
-        <div className={styles.container}>
-          <p>© 2026 Trendwatcher Inc. All rights reserved.</p>
-          <nav>
-            <a href="/privacy">Privacy</a>
-            <a href="/terms">Terms</a>
-          </nav>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 }

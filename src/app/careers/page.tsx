@@ -1,5 +1,6 @@
 import { Metadata } from 'next';
-import styles from './page.module.css';
+import styles from './careers.module.css';
+import Footer from '@/components/Footer';
 
 export const metadata: Metadata = {
   title: 'Careers | Trendwatcher',
@@ -50,7 +51,7 @@ export default function CareersPage() {
           <div className={styles.hero}>
             <div className={`${styles.sectionLabel} ${styles.mono}`}>CAREERS</div>
             <h1>Join the Mission</h1>
-            <p>We're building the intelligence layer for e-commerce. Help us democratize early trend detection.</p>
+            <p>We&apos;re building the intelligence layer for e-commerce. Help us democratize early trend detection.</p>
           </div>
 
           <div className={styles.positions}>
@@ -80,11 +81,7 @@ export default function CareersPage() {
         </div>
       </main>
 
-      <footer className={styles.footer}>
-        <div className={styles.container}>
-          <p>© 2026 Trendwatcher Inc. All rights reserved.</p>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 }

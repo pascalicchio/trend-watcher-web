@@ -1,5 +1,6 @@
 import { Metadata } from 'next';
 import styles from './about.module.css';
+import Footer from '@/components/Footer';
 
 export const metadata: Metadata = {
   title: 'About Us | Trendwatcher',
@@ -102,15 +103,7 @@ export default function AboutPage() {
         </div>
       </main>
 
-      <footer className={styles.footer}>
-        <div className={styles.container}>
-          <p>© 2026 Trendwatcher Inc. All rights reserved.</p>
-          <nav>
-            <a href="/privacy">Privacy</a>
-            <a href="/terms">Terms</a>
-          </nav>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 }

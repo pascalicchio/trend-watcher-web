@@ -151,10 +151,30 @@
   text-decoration: none;
   font-weight: 600;
   font-size: 14px;
+  cursor: pointer;
 }
 
-.readMore:hover {
+.readMore summary {
+  list-style: none;
+  outline: none;
+}
+
+.readMore summary::-webkit-details-marker {
+  display: none;
+}
+
+.readMore summary:hover {
   text-decoration: underline;
+}
+
+.content {
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid var(--border-subtle);
+  color: var(--text-secondary);
+  font-size: 14px;
+  line-height: 1.8;
+  text-align: left;
 }
 
 .footer {

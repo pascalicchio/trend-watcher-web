@@ -2,6 +2,11 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Smooth scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
 :root {
   --bg-primary: #0a0e1a;
   --bg-secondary: #0f1420;

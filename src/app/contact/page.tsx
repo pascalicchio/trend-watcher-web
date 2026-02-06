@@ -1,5 +1,6 @@
 import { Metadata } from 'next';
-import styles from './page.module.css';
+import styles from './contact.module.css';
+import Footer from '@/components/Footer';
 
 export const metadata: Metadata = {
   title: 'Contact | Trendwatcher',
@@ -27,7 +28,7 @@ export default function ContactPage() {
           <div className={styles.hero}>
             <div className={`${styles.sectionLabel} ${styles.mono}`}>CONTACT</div>
             <h1>Get in Touch</h1>
-            <p>Have questions? We'd love to hear from you.</p>
+            <p>Have questions? We&apos;d love to hear from you.</p>
           </div>
 
           <div className={styles.contactGrid}>
@@ -53,11 +54,7 @@ export default function ContactPage() {
         </div>
       </main>
 
-      <footer className={styles.footer}>
-        <div className={styles.container}>
-          <p>© 2026 Trendwatcher Inc. All rights reserved.</p>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 }
