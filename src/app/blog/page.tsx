@@ -16,7 +16,7 @@ export default function BlogPage() {
     },
     {
       title: 'The Death of Ad-Spy Tools: Why Metadata is the Future',
-      excerpt: 'Traditional ad-spy tools show you what's already saturated. Metadata analysis shows you what\'s coming.',
+      excerpt: 'Traditional ad-spy tools show you what&apos;s already saturated. Metadata analysis shows you what&apos;s coming.',
       date: 'Feb 1, 2026',
       category: 'Strategy',
     },
