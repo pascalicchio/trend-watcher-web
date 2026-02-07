@@ -3,8 +3,8 @@ import Stripe from 'stripe';
 import { db } from '@/lib/db';
 import { sendCredentialsEmail } from '@/lib/email';
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', {
-  apiVersion: '2026-01-28.claver'
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', { 
+  apiVersion: '2026-01-28.clover' as any
 });
 
 const WEBHOOK_SECRET = process.env.STRIPE_WEBHOOK_SECRET || '';

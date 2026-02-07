@@ -1,20 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { getTokenFromRequest, verifyToken } from '@/lib/auth';
-
-// Dynamic import to avoid webpack issues with external modules
-let atomicStorage: any = null;
-
-async function getAtomicStorage() {
-  if (!atomicStorage) {
-    try {
-      atomicStorage = require('../../../../trendwatcher/storage/atomic-storage');
-    } catch (e) {
-      console.warn('Could not load atomic storage:', e);
-    }
-  }
-  return atomicStorage;
-}
+import fs from 'fs';
+import path from 'path';
 
 export async function GET(request: NextRequest) {
   try {
@@ -36,37 +24,37 @@ export async function GET(request: NextRequest) {
     const type = searchParams.get('type');
     
     if (type === 'daily-top5') {
-      // Fetch from PostgreSQL database
+      // Try to fetch from local JSON file first
       try {
-        const storage = await getAtomicStorage();
-        if (storage && storage.getDailyTop5) {
-          const products = await storage.getDailyTop5();
-          return NextResponse.json({ 
-            success: true,
-            source: 'database',
-            products 
-          });
-        }
-        throw new Error('Atomic storage not available');
-      } catch (dbError) {
-        // Fallback to legacy JSON if DB fails
-        console.warn('Database fetch failed, falling back to JSON:', dbError);
-        
-        try {
-          const fs = require('fs');
-          const path = require('path');
-          const dataPath = path.join(process.cwd(), 'trend-engine/data/intelligence-card.json');
+        const dataPath = path.join(process.cwd(), 'data', 'daily-trends.json');
+        if (fs.existsSync(dataPath)) {
           const data = JSON.parse(fs.readFileSync(dataPath, 'utf8'));
-          
           return NextResponse.json({ 
             success: true,
-            source: 'json-fallback',
-            products: data.trends 
+            source: 'json-file',
+            products: data.trends || []
           });
-        } catch (jsonError) {
-          return NextResponse.json({ error: 'Failed to fetch reports' }, { status: 500 });
         }
+      } catch (e) {
+        console.warn('Could not read daily-trends.json:', e);
       }
+      
+      // Fallback to db.reports if JSON not available
+      const reports = await db.reports.findAll();
+      const trends = reports
+        .filter(r => r.type === 'intelligence-card')
+        .slice(0, 5)
+        .map(r => ({
+          title: r.title,
+          velocity: r.data?.velocity || 0,
+          saturation: r.data?.saturation || 2.5
+        }));
+      
+      return NextResponse.json({ 
+        success: true,
+        source: 'database',
+        products: trends
+      });
     }
     
     // Original reports endpoint
