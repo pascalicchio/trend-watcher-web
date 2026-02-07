@@ -21,7 +21,8 @@ export async function GET(request: Request) {
         'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
         'apikey': SUPABASE_ANON_KEY,
         'Content-Type': 'application/json'
-      }
+      },
+      cache: 'no-store'
     });
 
     if (!response.ok) {
@@ -34,6 +35,12 @@ export async function GET(request: Request) {
       success: true,
       count: data.length,
       trends: data
+    }, {
+      headers: {
+        'Cache-Control': 'no-cache, no-store, must-revalidate',
+        'Pragma': 'no-cache',
+        'Expires': '0'
+      }
     });
   } catch (error) {
     console.error('Error fetching trends:', error);
