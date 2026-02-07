@@ -4,16 +4,20 @@ import bcrypt from 'bcryptjs';
 import Stripe from 'stripe';
 import crypto from 'crypto';
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', { 
-  apiVersion: '2026-01-28.clover' as any
-});
+function getStripe(): Stripe {
+  const key = process.env.STRIPE_SECRET_KEY;
+  if (!key) {
+    throw new Error('STRIPE_SECRET_KEY not set');
+  }
+  return new Stripe(key, { 
+    apiVersion: '2026-01-28.clover' as any
+  });
+}
 
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
     const { email, password, token, session_id } = body;
-
-    console.log('🔐 POST /api/auth/set-password:', email);
 
     if (!email || !password) {
       return NextResponse.json({ error: 'email and password required' }, { status: 400 });
@@ -41,6 +45,7 @@ export async function POST(request: NextRequest) {
 
     // Session flow
     if (session_id) {
+      const stripe = getStripe();
       const session = await stripe.checkout.sessions.retrieve(session_id);
       
       if (session.payment_status !== 'paid') {
