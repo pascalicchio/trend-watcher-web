@@ -53,8 +53,8 @@ export default function DashboardOverview() {
       try {
         // Add timestamp to force fresh data
         const [userRes, cardsRes] = await Promise.all([
-          fetch(\`/api/users/profile?_=\${Date.now()}\`, { cache: 'no-store' }),
-          fetch(\`/api/intelligence-cards?_=\${Date.now()}\`, { cache: 'no-store' })
+          fetch(`/api/users/profile?_=${Date.now()}`, { cache: 'no-store' }),
+          fetch(`/api/intelligence-cards?_=${Date.now()}`, { cache: 'no-store' })
         ]);
         
         const userData = await userRes.json();
