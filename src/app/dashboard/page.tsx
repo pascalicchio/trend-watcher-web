@@ -198,203 +198,156 @@ export default function DashboardOverview() {
         </p>
       </div>
 
-      {/* Stats Grid */}
+      {/* Stats Cards */}
       <div style={{
         display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
-        gap: '24px',
+        gridTemplateColumns: 'repeat(4, 1fr)',
+        gap: '20px',
         marginBottom: '40px'
       }}>
+        {/* Active Trends */}
         <div style={{
-          background: 'var(--bg-card)',
-          border: '1px solid var(--border-subtle)',
+          background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.15) 0%, rgba(236, 72, 153, 0.15) 100%)',
+          border: '1px solid rgba(139, 92, 246, 0.3)',
           borderRadius: '16px',
-          padding: '24px'
+          padding: '24px',
+          textAlign: 'center'
         }}>
-          <div style={{ fontSize: '14px', color: 'var(--text-tertiary)', marginBottom: '8px' }}>
-            Your Plan
-          </div>
-          <div style={{
-            fontSize: '28px',
+          <div style={{ 
+            fontSize: '42px', 
             fontWeight: '700',
-            background: user?.subscription === 'inner-circle' ? 'var(--gradient-1)' : 'var(--text-secondary)',
+            background: 'linear-gradient(135deg, #8B5CF6 0%, #EC4899 100%)',
             WebkitBackgroundClip: 'text',
             WebkitTextFillColor: 'transparent'
           }}>
-            {user?.subscription === 'inner-circle' ? 'Inner Circle' : 'Free'}
+            {trends.length}
+          </div>
+          <div style={{ fontSize: '14px', color: '#a1a1aa', marginTop: '8px', textTransform: 'uppercase', letterSpacing: '1px' }}>
+            Active Trends
           </div>
         </div>
 
+        {/* Blue Ocean */}
         <div style={{
-          background: 'var(--bg-card)',
-          border: '1px solid var(--border-subtle)',
+          background: 'linear-gradient(135deg, rgba(0, 201, 255, 0.15) 0%, rgba(146, 254, 157, 0.15) 100%)',
+          border: '1px solid rgba(0, 201, 255, 0.3)',
           borderRadius: '16px',
-          padding: '24px'
+          padding: '24px',
+          textAlign: 'center'
         }}>
-          <div style={{ fontSize: '14px', color: 'var(--text-tertiary)', marginBottom: '8px' }}>
-            Intelligence Cards
+          <div style={{ 
+            fontSize: '42px', 
+            fontWeight: '700',
+            color: '#00C9FF'
+          }}>
+            {blueOceanCount}
           </div>
-          <div style={{ fontSize: '28px', fontWeight: '700' }}>{cards.length}</div>
+          <div style={{ fontSize: '14px', color: '#a1a1aa', marginTop: '8px', textTransform: 'uppercase', letterSpacing: '1px' }}>
+            Blue Ocean
+          </div>
         </div>
 
+        {/* Hot Trends */}
         <div style={{
-          background: 'var(--bg-card)',
-          border: '1px solid var(--border-subtle)',
+          background: 'linear-gradient(135deg, rgba(236, 72, 153, 0.15) 0%, rgba(139, 92, 246, 0.15) 100%)',
+          border: '1px solid rgba(236, 72, 153, 0.3)',
           borderRadius: '16px',
-          padding: '24px'
+          padding: '24px',
+          textAlign: 'center'
         }}>
-          <div style={{ fontSize: '14px', color: 'var(--text-tertiary)', marginBottom: '8px' }}>
-            Avg Velocity
+          <div style={{ 
+            fontSize: '42px', 
+            fontWeight: '700',
+            color: '#EC4899'
+          }}>
+            {hotTrendsCount}
           </div>
+          <div style={{ fontSize: '14px', color: '#a1a1aa', marginTop: '8px', textTransform: 'uppercase', letterSpacing: '1px' }}>
+            Hot Trends
+          </div>
+        </div>
+
+        {/* Last Updated */}
+        <div style={{
+          background: 'rgba(255, 255, 255, 0.02)',
+          border: '1px solid rgba(255, 255, 255, 0.08)',
+          borderRadius: '16px',
+          padding: '24px',
+          textAlign: 'center'
+        }}>
           <div style={{ 
             fontSize: '28px', 
-            fontWeight: '700', 
-            background: 'var(--gradient-1)', 
-            WebkitBackgroundClip: 'text', 
-            WebkitTextFillColor: 'transparent' 
+            fontWeight: '700',
+            color: '#fafafa'
           }}>
-            {latestCard?.data.summary.avgVelocity || 0}%
+            {lastUpdated ? lastUpdated.toLocaleTimeString() : '--:--:--'}
           </div>
-        </div>
-
-        <div style={{
-          background: 'var(--bg-card)',
-          border: '1px solid var(--border-subtle)',
-          borderRadius: '16px',
-          padding: '24px'
-        }}>
-          <div style={{ fontSize: '14px', color: 'var(--text-tertiary)', marginBottom: '8px' }}>
-            Live Trends
+          <div style={{ fontSize: '14px', color: '#a1a1aa', marginTop: '8px', textTransform: 'uppercase', letterSpacing: '1px' }}>
+            Last Updated
           </div>
-          <div style={{ fontSize: '28px', fontWeight: '700' }}>{trends.length}</div>
         </div>
       </div>
 
-      {/* Filter Bar */}
+      {/* Filter Buttons */}
       <div style={{
-        background: 'rgba(255, 255, 255, 0.02)',
-        border: '1px solid rgba(255, 255, 255, 0.05)',
-        borderRadius: '12px',
-        padding: '20px',
-        marginBottom: '32px'
+        display: 'flex',
+        gap: '12px',
+        marginBottom: '32px',
+        alignItems: 'center'
       }}>
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(4, 1fr)',
-          gap: '16px',
-          marginBottom: '20px'
-        }}>
-          <div style={{ textAlign: 'center' }}>
-            <div style={{ 
-              fontSize: '28px', 
-              fontWeight: '700',
-              background: 'linear-gradient(135deg, #8B5CF6 0%, #EC4899 100%)',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent'
-            }}>
-              {trends.length}
-            </div>
-            <div style={{ fontSize: '12px', color: '#71717a', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-              Active Trends
-            </div>
-          </div>
-
-          <div style={{ textAlign: 'center' }}>
-            <div style={{ 
-              fontSize: '28px', 
-              fontWeight: '700',
-              color: '#00C9FF'
-            }}>
-              {blueOceanCount}
-            </div>
-            <div style={{ fontSize: '12px', color: '#71717a', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-              Blue Ocean
-            </div>
-          </div>
-
-          <div style={{ textAlign: 'center' }}>
-            <div style={{ 
-              fontSize: '28px', 
-              fontWeight: '700',
-              color: '#EC4899'
-            }}>
-              {hotTrendsCount}
-            </div>
-            <div style={{ fontSize: '12px', color: '#71717a', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-              Hot Trends
-            </div>
-          </div>
-
-          <div style={{ textAlign: 'center' }}>
-            <div style={{ 
-              fontSize: '28px', 
-              fontWeight: '700',
-              color: '#fafafa'
-            }}>
-              {lastUpdated ? lastUpdated.toLocaleTimeString() : '--:--'}
-            </div>
-            <div style={{ fontSize: '12px', color: '#71717a', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-              Last Updated
-            </div>
-          </div>
-        </div>
-
-        {/* Filter Buttons */}
-        <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', alignItems: 'center' }}>
-          {['all', 'google_trends', 'amazon_movers', 'ebay_trending'].map((source) => (
-            <button
-              key={source}
-              onClick={() => setFilter(source)}
-              style={{
-                padding: '10px 20px',
-                background: filter === source 
-                  ? 'linear-gradient(135deg, rgba(139, 92, 246, 0.2) 0%, rgba(236, 72, 153, 0.2) 100%)'
-                  : 'rgba(255, 255, 255, 0.03)',
-                border: filter === source 
-                  ? '1px solid #8B5CF6'
-                  : '1px solid rgba(255, 255, 255, 0.1)',
-                borderRadius: '8px',
-                color: filter === source ? '#fafafa' : '#a1a1aa',
-                fontSize: '14px',
-                cursor: 'pointer',
-                transition: 'all 0.2s',
-                textTransform: 'capitalize'
-              }}
-            >
-              {source === 'all' ? 'All Sources' : source.replace('_', ' ')}
-            </button>
-          ))}
-
+        {['all', 'google_trends', 'amazon_movers', 'ebay_trending'].map((source) => (
           <button
-            onClick={() => {
-              const url = filter === 'all' 
-                ? '/api/trends?limit=50' 
-                : `/api/trends?limit=50&source=${filter}`;
-              fetch(url)
-                .then(r => r.json())
-                .then(data => {
-                  if (data.success) {
-                    setTrends(data.trends);
-                    setLastUpdated(new Date());
-                  }
-                });
-            }}
+            key={source}
+            onClick={() => setFilter(source)}
             style={{
-              marginLeft: 'auto',
-              padding: '10px 20px',
-              background: 'linear-gradient(135deg, #8B5CF6 0%, #EC4899 100%)',
-              border: 'none',
+              padding: '12px 24px',
+              background: filter === source 
+                ? 'linear-gradient(135deg, rgba(139, 92, 246, 0.3) 0%, rgba(236, 72, 153, 0.3) 100%)'
+                : 'rgba(255, 255, 255, 0.03)',
+              border: filter === source 
+                ? '1px solid #8B5CF6'
+                : '1px solid rgba(255, 255, 255, 0.1)',
               borderRadius: '8px',
-              color: 'white',
+              color: filter === source ? '#fafafa' : '#a1a1aa',
               fontSize: '14px',
-              fontWeight: '600',
               cursor: 'pointer',
-              transition: 'all 0.2s'
+              transition: 'all 0.2s',
+              textTransform: 'capitalize'
             }}
           >
-            ↻ Refresh
+            {source === 'all' ? 'All Sources' : source.replace('_', ' ')}
           </button>
-        </div>
+        ))}
+
+        <button
+          onClick={() => {
+            const url = filter === 'all' 
+              ? '/api/trends?limit=50' 
+              : `/api/trends?limit=50&source=${filter}`;
+            fetch(url)
+              .then(r => r.json())
+              .then(data => {
+                if (data.success) {
+                  setTrends(data.trends);
+                  setLastUpdated(new Date());
+                }
+              });
+          }}
+          style={{
+            marginLeft: 'auto',
+            padding: '12px 24px',
+            background: 'linear-gradient(135deg, #8B5CF6 0%, #EC4899 100%)',
+            border: 'none',
+            borderRadius: '8px',
+            color: 'white',
+            fontSize: '14px',
+            fontWeight: '600',
+            cursor: 'pointer',
+            transition: 'all 0.2s'
+          }}
+        >
+          ↻ Refresh
+        </button>
       </div>
 
       {/* Live Trends Grid */}
