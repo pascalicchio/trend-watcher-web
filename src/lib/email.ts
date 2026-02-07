@@ -76,7 +76,7 @@ async function sendEmail(to: string, subject: string, html: string, text: string
   // Fall back to Brevo SMTP
   if (BREVO_SMTP_USER && BREVO_SMTP_PASS) {
     try {
-      const transporter = nodemailer.createTransporter({
+      const transporter = nodemailer.createTransport({
         host: BREVO_SMTP_HOST,
         port: BREVO_SMTP_PORT,
         secure: BREVO_SMTP_PORT === 465,
