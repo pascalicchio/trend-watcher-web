@@ -69,7 +69,7 @@ function SetupPasswordForm() {
     setLoading(true);
 
     try {
-      const res = await fetch('/api/auth/setup-password', {
+      const res = await fetch('/api/auth/set-password', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ 

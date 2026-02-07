@@ -10,15 +10,16 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', {
 
 export async function POST(request: NextRequest) {
   try {
-    const { email, password, token, session_id } = await request.json();
+    const body = await request.json();
+    const { email, password, token, session_id } = body;
+
+    console.log('🔐 POST /api/auth/set-password:', email);
 
     if (!email || !password) {
       return NextResponse.json({ error: 'email and password required' }, { status: 400 });
     }
 
-    console.log('🔐 Set-password:', email);
-
-    // Case 1: Token flow
+    // Token flow
     if (token) {
       const user = await db.users.findBySetupToken(token);
       
@@ -38,7 +39,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ success: true });
     }
 
-    // Case 2: Stripe session flow
+    // Session flow
     if (session_id) {
       const session = await stripe.checkout.sessions.retrieve(session_id);
       
@@ -46,15 +47,12 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ error: 'Payment not completed' }, { status: 400 });
       }
 
-      // Find or create user
       let user = await db.users.findByEmail(email);
       
       if (!user) {
-        // Try finding by customer ID
         user = await db.users.findByCustomerId(session.customer as string);
         
         if (!user) {
-          // Create new user
           try {
             const setupToken = crypto.randomBytes(32).toString('hex');
             user = await db.users.create({
@@ -69,7 +67,7 @@ export async function POST(request: NextRequest) {
             });
             console.log('✅ User created:', user.id);
           } catch (e: any) {
-            console.error('User create error:', e.message);
+            console.error('❌ User create error:', e.message);
             return NextResponse.json({ error: 'Failed to create user' }, { status: 500 });
           }
         }
@@ -87,10 +85,9 @@ export async function POST(request: NextRequest) {
         });
         console.log('✅ Subscription created');
       } catch (e: any) {
-        console.error('Subscription error:', e.message);
+        console.error('❌ Subscription error:', e.message);
       }
 
-      // Set password
       const passwordHash = await bcrypt.hash(password, 12);
 
       await db.users.update(user.id!, {
