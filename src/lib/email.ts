@@ -16,8 +16,8 @@ const BREVO_FROM_EMAIL = process.env.BREVO_FROM_EMAIL || FROM_EMAIL;
 // Brand colors - Blue/Green gradient
 const BRAND_GRADIENT = 'linear-gradient(135deg, #00C9FF 0%, #92FE9D 100%)';
 const BRAND_COLORS = {
-  background: '#0a0a0a',
-  card: '#0f172a',
+  background: '#1f3157',  // Deep blue
+  card: '#142040',
   cardBorder: 'rgba(0, 201, 255, 0.2)',
   textPrimary: '#f8fafc',
   textSecondary: '#94a3b8',
