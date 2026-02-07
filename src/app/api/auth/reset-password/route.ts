@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
+import bcrypt from 'bcryptjs';
 
 export async function POST(request: NextRequest) {
   try {
@@ -37,12 +38,17 @@ export async function POST(request: NextRequest) {
       );
     }
     
+    // Hash password before saving!
+    const passwordHash = await bcrypt.hash(password, 12);
+    
     // Update password and clear reset token
     await db.users.update(user.id, {
-      password,
+      password: passwordHash,
       reset_token: null,
       reset_token_expires: null
     });
+    
+    console.log('✅ Password reset for user:', user.email);
     
     return NextResponse.json({
       success: true,
