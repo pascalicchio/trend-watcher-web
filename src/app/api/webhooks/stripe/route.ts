@@ -132,15 +132,14 @@ async function handleCheckoutComplete(session: Stripe.Checkout.Session) {
 async function handleSubscriptionChange(subscription: Stripe.Subscription) {
   const customerId = subscription.customer as string;
 
-  // Find user by stripe customer ID
-  const { data: users } = await db.users.findByEmail(''); // This won't work, need different approach
-
-  // For now, log the event
   console.log('Subscription changed:', {
     customerId,
     status: subscription.status,
     cancelAtPeriodEnd: subscription.cancel_at_period_end
   });
+
+  // Note: Would need to query by stripe_customer_id to find the user
+  // For now, we log the event - user management via Stripe Dashboard
 }
 
 /**
