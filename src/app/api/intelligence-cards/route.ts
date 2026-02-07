@@ -33,6 +33,12 @@ export async function GET(request: NextRequest) {
         latestCard: cards[0]?.data?.title || null,
         topTrend: cards[0]?.data?.summary?.topMover || null
       }
+    }, {
+      headers: {
+        'Cache-Control': 'no-cache, no-store, must-revalidate',
+        'Pragma': 'no-cache',
+        'Expires': '0'
+      }
     });
   } catch (error) {
     console.error('Get intelligence cards error:', error);
