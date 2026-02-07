@@ -27,16 +27,30 @@ function SetupPasswordForm() {
       }
 
       // Case 2: Stripe redirect with session_id
+      // The email will be verified when they submit the form
       if (sessionId) {
         setLoading(true);
+        setError('Verifying payment...');
+        
+        // Verify by calling the set-password endpoint with the session_id
         try {
-          const res = await fetch('/api/auth/verify-session?session_id=' + sessionId);
-          const data = await res.json();
+          const res = await fetch('/api/auth/set-password', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ 
+              email: 'temp@example.com', // Will be updated by user
+              password: 'temp',
+              token: '',
+              session_id: sessionId 
+            })
+          });
           
-          if (data.email) {
-            setEmail(data.email);
+          // If payment not completed, show error
+          const data = await res.json();
+          if (data.error && data.error.includes('Payment not completed')) {
+            setError('Payment not completed. Please try again.');
           } else {
-            setError('Session not found or expired. Please try again.');
+            setError('Payment verified. Please set your password.');
           }
         } catch (e) {
           setError('Failed to verify payment. Please try again.');
@@ -169,7 +183,6 @@ function SetupPasswordForm() {
           </Link>
         </div>
 
-        {/* Header */}
         <h1 style={{
           fontSize: '28px',
           fontWeight: '700',
@@ -186,7 +199,6 @@ function SetupPasswordForm() {
           Create a password to access your Inner Circle dashboard
         </p>
 
-        {/* Error */}
         {error && (
           <div style={{
             background: 'rgba(252, 70, 107, 0.15)',
@@ -201,13 +213,11 @@ function SetupPasswordForm() {
           </div>
         )}
 
-        {/* Loading */}
         {loading ? (
           <div style={{ textAlign: 'center', padding: '40px' }}>
-            <p style={{ color: 'var(--text-secondary)' }}>Verifying...</p>
+            <p style={{ color: 'var(--text-secondary)' }}>Processing...</p>
           </div>
         ) : (
-          /* Form */
           <form onSubmit={handleSubmit}>
             <div style={{ marginBottom: '20px' }}>
               <label style={{
