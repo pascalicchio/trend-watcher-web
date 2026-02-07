@@ -4,6 +4,9 @@ import { getTokenFromRequest, verifyToken } from '@/lib/auth';
 import fs from 'fs';
 import path from 'path';
 
+// Force dynamic - this route accesses request.headers
+export const dynamic = 'force-dynamic';
+
 export async function GET(request: NextRequest) {
   try {
     const token = getTokenFromRequest(request);

@@ -2,6 +2,9 @@ import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { getTokenFromRequest, verifyToken } from '@/lib/auth';
 
+// Force dynamic - this route accesses request.headers
+export const dynamic = 'force-dynamic';
+
 export async function GET(request: NextRequest) {
   try {
     const token = getTokenFromRequest(request);
