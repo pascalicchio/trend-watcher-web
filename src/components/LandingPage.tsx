@@ -435,7 +435,7 @@ const LandingPage: React.FC = () => {
                 <li>Velocity + Saturation scoring</li>
               </ul>
 
-              <a href="/pricing" className={`${styles.pricingCta} ${styles.btnPrimary}`}>
+              <a href="/api/checkout" className={`${styles.pricingCta} ${styles.btnPrimary}`} onClick={(e) => { e.preventDefault(); fetch('/api/checkout', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ priceId: 'price_1Swyxa31jVHQylkhu0zQN5wn' }) }).then(r => r.json()).then(d => { if (d.url) window.location.href = d.url; }); }}>
                 Start 2-Day Free Trial →
               </a>
               <div style={{ textAlign: 'center', marginTop: '16px', fontSize: '13px', color: 'var(--text-tertiary)' }}>
