@@ -59,9 +59,6 @@ export default function DashboardOverview() {
         const userData = await userRes.json();
         const cardsData = await cardsRes.json();
         
-        console.log('[Dashboard] Response status:', userRes.status);
-        console.log('[Dashboard] User data:', userData);
-        
         // Check if user was deleted or subscription expired - MORE AGGRESSIVE
         const shouldLogout = 
           !userRes.ok ||
@@ -73,19 +70,24 @@ export default function DashboardOverview() {
         if (shouldLogout) {
           console.log('⚠️ FORCE LOGOUT:', userData.error || 'User missing');
           // Clear ALL cookies
-          document.cookie = 'auth_token=; Path=/; Domain=trendwatcher.io; Expires=Thu, 01 Jan 1970 00:00:00 GMT';
-          document.cookie = 'auth_token=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT';
+          if (typeof document !== 'undefined') {
+            document.cookie = 'auth_token=; Path=/; Domain=trendwatcher.io; Expires=Thu, 01 Jan 1970 00:00:00 GMT';
+            document.cookie = 'auth_token=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT';
+          }
           // Use replace to prevent back button
-          window.location.replace('/login?reason=session_expired');
+          if (typeof window !== 'undefined') {
+            window.location.replace('/login?reason=session_expired');
+          }
           return;
         }
         
-        console.log('[Dashboard] User data:', userData.user);
         setUser(userData.user);
         setCards(cardsData.cards || []);
       } catch (error) {
         console.error('Error fetching dashboard data:', error);
-        window.location.replace('/login');
+        if (typeof window !== 'undefined') {
+          window.location.replace('/login');
+        }
       } finally {
         setLoading(false);
       }
@@ -93,12 +95,44 @@ export default function DashboardOverview() {
     fetchData();
   }, [pathname]);
 
+  // Also check on window focus (user tabs back in)
+  useEffect(() => {
+    function onFocus() {
+      fetchData();
+    }
+    window.addEventListener('focus', onFocus);
+    return () => window.removeEventListener('focus', onFocus);
+  }, [pathname]);
+
+  const latestCard = cards[0];
+
   const latestCard = cards[0];
 
   if (loading) {
     return (
-      <div style={{ textAlign: 'center', padding: '60px 0', color: 'var(--text-secondary)' }}>
-        Loading dashboard...
+      <div style={{ 
+        display: 'flex', 
+        flexDirection: 'column',
+        alignItems: 'center', 
+        justifyContent: 'center', 
+        minHeight: '70vh',
+        color: 'var(--text-secondary)'
+      }}>
+        <div style={{ 
+          width: '48px', 
+          height: '48px', 
+          border: '3px solid var(--border-subtle)',
+          borderTopColor: 'var(--accent-purple)',
+          borderRadius: '50%',
+          animation: 'spin 1s linear infinite',
+          marginBottom: '16px'
+        }} />
+        <p>Verifying session...</p>
+        <style>{`
+          @keyframes spin {
+            to { transform: rotate(360deg); }
+          }
+        `}</style>
       </div>
     );
   }
