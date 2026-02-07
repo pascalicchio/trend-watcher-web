@@ -51,16 +51,14 @@ export default function DashboardOverview() {
     
     async function fetchData() {
       try {
-        // Add timestamp to force fresh data
         const [userRes, cardsRes] = await Promise.all([
-          fetch(`/api/users/profile?_=${Date.now()}`, { cache: 'no-store' }),
-          fetch(`/api/intelligence-cards?_=${Date.now()}`, { cache: 'no-store' })
+          fetch('/api/users/profile?_=' + Date.now(), { cache: 'no-store' }),
+          fetch('/api/intelligence-cards?_=' + Date.now(), { cache: 'no-store' })
         ]);
         
         const userData = await userRes.json();
         const cardsData = await cardsRes.json();
         
-        // Check if user was deleted or subscription expired
         const shouldLogout = 
           !userRes.ok ||
           userData.forceLogout ||
@@ -69,9 +67,7 @@ export default function DashboardOverview() {
           !userData.user;
         
         if (shouldLogout) {
-          console.log('⚠️ FORCE LOGOUT:', userData.error || 'User missing');
           if (typeof document !== 'undefined') {
-            document.cookie = 'auth_token=; Path=/; Domain=trendwatcher.io; Expires=Thu, 01 Jan 1970 00:00:00 GMT';
             document.cookie = 'auth_token=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT';
           }
           if (typeof window !== 'undefined') {
@@ -83,7 +79,6 @@ export default function DashboardOverview() {
         setUser(userData.user);
         setCards(cardsData.cards || []);
       } catch (error) {
-        console.error('Error fetching dashboard data:', error);
         if (typeof window !== 'undefined') {
           window.location.replace('/login');
         }
@@ -92,16 +87,13 @@ export default function DashboardOverview() {
       }
     }
     
-    // Initial fetch
     fetchData();
     
-    // Also check on window focus (user tabs back in)
     function onFocus() {
       fetchData();
     }
     window.addEventListener('focus', onFocus);
     
-    // Cleanup
     return () => {
       window.removeEventListener('focus', onFocus);
     };
@@ -140,19 +132,17 @@ export default function DashboardOverview() {
 
   return (
     <div>
-      {/* Header */}
       <div style={{ marginBottom: '40px' }}>
         <h1 style={{ fontSize: '32px', fontWeight: '700', marginBottom: '8px' }}>
-          Welcome back, {user?.name?.split(' ')[0]}! 👋
+          Welcome back, {user?.name?.split(' ')[0]}! 
         </h1>
         <p style={{ color: 'var(--text-secondary)' }}>
           {latestCard 
-            ? \`Latest report: \${latestCard.data.summary.totalTrends} trends detected\`
+            ? 'Latest report: ' + latestCard.data.summary.totalTrends + ' trends detected'
             : 'Ready to start detecting trends'}
         </p>
       </div>
 
-      {/* Stats Cards */}
       <div style={{
         display: 'grid',
         gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
@@ -177,11 +167,6 @@ export default function DashboardOverview() {
           }}>
             {user?.subscription === 'inner-circle' ? 'Inner Circle' : 'Free'}
           </div>
-          <div style={{ fontSize: '13px', color: 'var(--text-tertiary)', marginTop: '8px' }}>
-            {user?.subscription === 'inner-circle' 
-              ? 'Full intelligence access' 
-              : 'Upgrade for early access'}
-          </div>
         </div>
 
         <div style={{
@@ -194,9 +179,6 @@ export default function DashboardOverview() {
             Intelligence Cards
           </div>
           <div style={{ fontSize: '28px', fontWeight: '700' }}>{cards.length}</div>
-          <div style={{ fontSize: '13px', color: 'var(--text-tertiary)', marginTop: '8px' }}>
-            Reports delivered
-          </div>
         </div>
 
         <div style={{
@@ -217,13 +199,9 @@ export default function DashboardOverview() {
           }}>
             {latestCard?.data.summary.avgVelocity || 0}%
           </div>
-          <div style={{ fontSize: '13px', color: 'var(--text-tertiary)', marginTop: '8px' }}>
-            Trend growth rate
-          </div>
         </div>
       </div>
 
-      {/* Latest Intelligence Card */}
       {latestCard ? (
         <div style={{
           background: 'var(--bg-card)',
@@ -241,9 +219,7 @@ export default function DashboardOverview() {
                 {new Date(latestCard.created_at).toLocaleDateString('en-US', { 
                   weekday: 'long', 
                   month: 'long', 
-                  day: 'numeric',
-                  hour: '2-digit',
-                  minute: '2-digit'
+                  day: 'numeric'
                 })}
               </p>
             </div>
@@ -255,11 +231,10 @@ export default function DashboardOverview() {
               fontWeight: '600',
               color: 'var(--accent-blue)'
             }}>
-              🔥 LIVE
+              LIVE
             </span>
           </div>
 
-          {/* AI Insights */}
           <div style={{
             background: 'linear-gradient(135deg, rgba(0, 201, 255, 0.08) 0%, rgba(146, 254, 157, 0.08) 100%)',
             borderRadius: '12px',
@@ -267,110 +242,44 @@ export default function DashboardOverview() {
             marginBottom: '24px'
           }}>
             <div style={{ fontSize: '14px', fontWeight: '600', marginBottom: '12px', color: 'var(--accent-blue)' }}>
-              🤖 AI Insights
+              AI Insights
             </div>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-              {latestCard.data.aiInsights?.slice(0, 3).map((insight, i) => (
-                <div key={i} style={{ fontSize: '14px', color: 'var(--text-secondary)' }}>
-                  {insight}
-                </div>
-              ))}
-            </div>
+            {latestCard.data.aiInsights?.slice(0, 3).map((insight: string, i: number) => (
+              <div key={i} style={{ fontSize: '14px', color: 'var(--text-secondary)', marginBottom: '8px' }}>
+                {insight}
+              </div>
+            ))}
           </div>
 
-          {/* Top Products */}
           <div style={{ marginBottom: '24px' }}>
             <h3 style={{ fontSize: '16px', fontWeight: '600', marginBottom: '16px' }}>
-              🛒 Trending Products
+              Trending Products
             </h3>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-              {latestCard.data.products?.slice(0, 3).map((product, i) => (
-                <div key={i} style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '16px',
-                  padding: '16px',
-                  background: 'rgba(0, 0, 0, 0.2)',
-                  borderRadius: '12px',
-                  border: '1px solid var(--border-subtle)'
-                }}>
-                  <span style={{ fontSize: '24px' }}>{product.emoji}</span>
-                  <div style={{ flex: 1 }}>
-                    <div style={{ fontWeight: '500', marginBottom: '4px' }}>{product.name}</div>
-                    <div style={{ fontSize: '13px', color: 'var(--text-tertiary)' }}>
-                      💰 {product.priceRange} • {product.platform || 'Amazon'}
-                    </div>
-                  </div>
-                  <div style={{ textAlign: 'right' }}>
-                    <div style={{ 
-                      fontSize: '18px', 
-                      fontWeight: '700',
-                      color: product.velocity > 300 ? 'var(--accent-primary)' : 'var(--text-primary)'
-                    }}>
-                      {product.velocity}%
-                    </div>
-                    <div style={{ fontSize: '12px', color: 'var(--text-tertiary)' }}>
-                      Velocity
-                    </div>
-                  </div>
-                  <div style={{
-                    padding: '6px 12px',
-                    background: product.recommendation?.includes('HOT') 
-                      ? 'rgba(252, 70, 107, 0.2)' 
-                      : 'rgba(0, 201, 255, 0.15)',
-                    borderRadius: '20px',
-                    fontSize: '12px',
-                    fontWeight: '600',
-                    color: product.recommendation?.includes('HOT')
-                      ? 'var(--accent-pink)'
-                      : 'var(--accent-blue)'
-                  }}>
-                    {product.recommendation}
+            {latestCard.data.products?.slice(0, 3).map((product: any, i: number) => (
+              <div key={i} style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '16px',
+                padding: '16px',
+                background: 'rgba(0, 0, 0, 0.2)',
+                borderRadius: '12px',
+                border: '1px solid var(--border-subtle)',
+                marginBottom: '12px'
+              }}>
+                <span style={{ fontSize: '24px' }}>{product.emoji}</span>
+                <div style={{ flex: 1 }}>
+                  <div style={{ fontWeight: '500', marginBottom: '4px' }}>{product.name}</div>
+                  <div style={{ fontSize: '13px', color: 'var(--text-tertiary)' }}>
+                    {product.priceRange}
                   </div>
                 </div>
-              ))}
-            </div>
-          </div>
-
-          {/* HN Trends */}
-          <div>
-            <h3 style={{ fontSize: '16px', fontWeight: '600', marginBottom: '16px' }}>
-              📰 Hacker News Trends
-            </h3>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-              {latestCard.data.hnTrends?.slice(0, 3).map((trend, i) => (
-                <div key={i} style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '12px',
-                  padding: '12px',
-                  background: 'rgba(0, 0, 0, 0.2)',
-                  borderRadius: '8px'
-                }}>
-                  <span style={{ 
-                    padding: '4px 8px', 
-                    background: 'var(--bg-card)', 
-                    borderRadius: '4px',
-                    fontSize: '11px',
-                    fontWeight: '600',
-                    color: 'var(--accent-purple)'
-                  }}>
-                    {trend.category}
-                  </span>
-                  <div style={{ flex: 1 }}>
-                    <div style={{ fontSize: '14px', fontWeight: '500', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                      {trend.title}
-                    </div>
-                    <div style={{ fontSize: '12px', color: 'var(--text-tertiary)' }}>
-                      {trend.domain}
-                    </div>
+                <div style={{ textAlign: 'right' }}>
+                  <div style={{ fontSize: '18px', fontWeight: '700' }}>
+                    {product.velocity}%
                   </div>
-                  <span style={{ fontSize: '13px', color: 'var(--text-secondary)' }}>
-                    ⬆️ {trend.score}
-                  </span>
                 </div>
-              ))}
-            </div>
+              </div>
+            ))}
           </div>
         </div>
       ) : (
@@ -386,37 +295,8 @@ export default function DashboardOverview() {
             No intelligence cards yet
           </h3>
           <p style={{ color: 'var(--text-secondary)', maxWidth: '400px', margin: '0 auto' }}>
-            Intelligence cards are generated daily at 8 AM UTC. Your first report will appear here soon!
+            Intelligence cards are generated daily at 8 AM UTC.
           </p>
-        </div>
-      )}
-
-      {/* CTA for free users */}
-      {user?.subscription !== 'inner-circle' && (
-        <div style={{
-          background: 'linear-gradient(135deg, rgba(0, 201, 255, 0.1) 0%, rgba(146, 254, 157, 0.1) 100%)',
-          border: '1px solid var(--accent-blue)',
-          borderRadius: '16px',
-          padding: '32px',
-          textAlign: 'center'
-        }}>
-          <h3 style={{ fontSize: '20px', fontWeight: '600', marginBottom: '12px' }}>
-            Upgrade to Inner Circle
-          </h3>
-          <p style={{ color: 'var(--text-secondary)', marginBottom: '24px', maxWidth: '500px', margin: '0 auto 24px' }}>
-            Get 48-hour early access to trending products, AI-generated TikTok scripts, and full competitor analysis.
-          </p>
-          <a href="/dashboard/subscription" style={{
-            display: 'inline-block',
-            padding: '14px 32px',
-            background: 'var(--gradient-1)',
-            borderRadius: '8px',
-            color: 'var(--bg-primary)',
-            fontWeight: '600',
-            textDecoration: 'none'
-          }}>
-            Upgrade Now
-          </a>
         </div>
       )}
     </div>

@@ -4,11 +4,17 @@ import { db } from '@/lib/db';
 import { sendWelcomeEmail } from '@/lib/email';
 import crypto from 'crypto';
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', { 
-  apiVersion: '2026-01-28.clover' as any
-});
-
 const WEBHOOK_SECRET = process.env.STRIPE_WEBHOOK_SECRET || '';
+
+function getStripe(): Stripe {
+  const key = process.env.STRIPE_SECRET_KEY;
+  if (!key) {
+    throw new Error('STRIPE_SECRET_KEY not set');
+  }
+  return new Stripe(key, { 
+    apiVersion: '2026-01-28.clover' as any
+  });
+}
 
 export async function POST(request: NextRequest) {
   try {
@@ -34,6 +40,7 @@ export async function POST(request: NextRequest) {
       }
 
       try {
+        const stripe = getStripe();
         event = stripe.webhooks.constructEvent(body, sig, WEBHOOK_SECRET);
       } catch (err: any) {
         console.error('❌ Signature verification failed:', err.message);
@@ -93,13 +100,11 @@ async function handleCheckoutComplete(session: Stripe.Checkout.Session) {
   if (user) {
     console.log('👤 Existing user found:', user.id);
     
-    // Update user
     await db.users.update(user.id!, {
       stripe_customer_id: customerId,
       subscription: 'inner-circle'
     });
 
-    // Create subscription record
     await db.subscriptions.create({
       user_id: user.id!,
       plan: 'inner-circle',
@@ -111,7 +116,6 @@ async function handleCheckoutComplete(session: Stripe.Checkout.Session) {
 
     console.log('✅ Updated subscription for:', user.id);
 
-    // Send welcome email if not already sent
     if (!user.setup_token) {
       const setupToken = crypto.randomBytes(32).toString('hex');
       await db.users.update(user.id!, {
@@ -125,10 +129,8 @@ async function handleCheckoutComplete(session: Stripe.Checkout.Session) {
   } else {
     console.log('🆕 Creating new user...');
     
-    // Create setup token
     const setupToken = crypto.randomBytes(32).toString('hex');
     
-    // Create new user
     user = await db.users.create({
       email,
       password: '',
@@ -142,7 +144,6 @@ async function handleCheckoutComplete(session: Stripe.Checkout.Session) {
 
     console.log('✅ Created user:', user.id);
 
-    // Create subscription record
     await db.subscriptions.create({
       user_id: user.id!,
       plan: 'inner-circle',
@@ -152,7 +153,6 @@ async function handleCheckoutComplete(session: Stripe.Checkout.Session) {
       end_date: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString()
     });
 
-    // Send welcome email
     console.log('📧 Sending welcome email...');
     await sendWelcomeEmail(email, setupToken);
   }
