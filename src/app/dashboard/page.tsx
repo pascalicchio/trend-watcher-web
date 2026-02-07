@@ -104,7 +104,14 @@ export default function DashboardOverview() {
     return () => window.removeEventListener('focus', onFocus);
   }, [pathname]);
 
-  const latestCard = cards[0];
+  // Also check on window focus (user tabs back in)
+  useEffect(() => {
+    function onFocus() {
+      fetchData();
+    }
+    window.addEventListener('focus', onFocus);
+    return () => window.removeEventListener('focus', onFocus);
+  }, [pathname]);
 
   const latestCard = cards[0];
 
