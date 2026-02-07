@@ -1,0 +1,370 @@
+.dashboard {
+  min-height: 100vh;
+  background: #0a0a0f;
+  color: #fafafa;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+/* Header */
+.header {
+  background: rgba(255, 255, 255, 0.02);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  padding: 16px 0;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.headerContent {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logo {
+  text-decoration: none;
+  font-size: 24px;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+}
+
+.logoTrend {
+  background: linear-gradient(135deg, #00C9FF 0%, #92FE9D 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.logoWatcher {
+  color: #fafafa;
+}
+
+.nav {
+  display: flex;
+  gap: 24px;
+  align-items: center;
+}
+
+.navLink {
+  color: #a1a1aa;
+  text-decoration: none;
+  font-size: 14px;
+  transition: color 0.2s;
+}
+
+.navLink:hover {
+  color: #fafafa;
+}
+
+.navBtn {
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.2s;
+}
+
+.navBtn.primary {
+  background: linear-gradient(135deg, #8B5CF6 0%, #EC4899 100%);
+  color: white;
+}
+
+.navBtn.primary:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+/* Main */
+.main {
+  padding: 32px 0;
+}
+
+/* Stats Bar */
+.statsBar {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-bottom: 32px;
+}
+
+.stat {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  padding: 20px;
+  text-align: center;
+}
+
+.statValue {
+  display: block;
+  font-size: 28px;
+  font-weight: 700;
+  background: linear-gradient(135deg, #8B5CF6 0%, #EC4899 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-bottom: 4px;
+}
+
+.statLabel {
+  font-size: 12px;
+  color: #71717a;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Filters */
+.filters {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 32px;
+  flex-wrap: wrap;
+}
+
+.filterBtn {
+  padding: 10px 20px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  color: #a1a1aa;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-transform: capitalize;
+}
+
+.filterBtn:hover {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.2);
+  color: #fafafa;
+}
+
+.filterBtn.active {
+  background: linear-gradient(135deg, rgba(139, 92, 246, 0.2) 0%, rgba(236, 72, 153, 0.2) 100%);
+  border-color: #8B5CF6;
+  color: #fafafa;
+}
+
+.refreshBtn {
+  margin-left: auto;
+  padding: 10px 20px;
+  background: linear-gradient(135deg, #8B5CF6 0%, #EC4899 100%);
+  border: none;
+  border-radius: 8px;
+  color: white;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.refreshBtn:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+/* Trends Grid */
+.trendsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 20px;
+}
+
+/* Trend Card */
+.trendCard {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  padding: 20px;
+  transition: all 0.3s ease;
+}
+
+.trendCard:hover {
+  background: rgba(255, 255, 255, 0.04);
+  border-color: rgba(139, 92, 246, 0.3);
+  transform: translateY(-4px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+}
+
+.cardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.sourceBadge {
+  font-size: 10px;
+  font-weight: 600;
+  padding: 4px 10px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 20px;
+  color: #a1a1aa;
+  letter-spacing: 0.5px;
+}
+
+.saturationBadge {
+  font-size: 10px;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 20px;
+  color: #0a0a0f;
+  letter-spacing: 0.5px;
+}
+
+.trendTitle {
+  font-size: 16px;
+  font-weight: 600;
+  color: #fafafa;
+  margin: 0 0 12px 0;
+  line-height: 1.4;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.trendLink {
+  display: inline-block;
+  font-size: 13px;
+  color: #8B5CF6;
+  text-decoration: none;
+  margin-bottom: 16px;
+  transition: color 0.2s;
+}
+
+.trendLink:hover {
+  color: #EC4899;
+}
+
+.metrics {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.metric {
+  text-align: left;
+}
+
+.metricLabel {
+  font-size: 10px;
+  color: #71717a;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 4px;
+}
+
+.metricValue {
+  font-size: 24px;
+  font-weight: 700;
+}
+
+.metricValueSmall {
+  font-size: 12px;
+  color: #a1a1aa;
+  word-break: break-word;
+}
+
+.collectedAt {
+  margin-top: 16px;
+  font-size: 11px;
+  color: #52525b;
+  text-align: right;
+}
+
+/* Loading */
+.loading {
+  text-align: center;
+  padding: 80px 0;
+}
+
+.spinner {
+  width: 48px;
+  height: 48px;
+  border: 3px solid rgba(139, 92, 246, 0.2);
+  border-top-color: #8B5CF6;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: 0 auto 24px;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.loading p {
+  color: #71717a;
+  font-size: 14px;
+}
+
+/* Error */
+.error {
+  text-align: center;
+  padding: 60px 0;
+  background: rgba(255, 107, 107, 0.1);
+  border: 1px solid rgba(255, 107, 107, 0.2);
+  border-radius: 12px;
+  margin: 20px 0;
+}
+
+.error p {
+  color: #FF6B6B;
+  margin-bottom: 16px;
+}
+
+.error button {
+  padding: 10px 24px;
+  background: #FF6B6B;
+  border: none;
+  border-radius: 8px;
+  color: white;
+  cursor: pointer;
+}
+
+/* Empty */
+.empty {
+  text-align: center;
+  padding: 80px 0;
+  color: #71717a;
+}
+
+/* Footer */
+.footer {
+  padding: 32px 0;
+  text-align: center;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  margin-top: 64px;
+}
+
+.footer p {
+  font-size: 13px;
+  color: #52525b;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .statsBar {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .filters {
+    flex-wrap: wrap;
+  }
+  
+  .refreshBtn {
+    margin-left: 0;
+    margin-top: 12px;
+    width: 100%;
+  }
+  
+  .trendsGrid {
+    grid-template-columns: 1fr;
+  }
+}
