@@ -5,7 +5,7 @@ import { useEffect } from 'react';
 export default function SuccessPage() {
   useEffect(() => {
     const timer = setTimeout(() => {
-      window.location.href = '/dashboard';
+      window.location.href = '/login';
     }, 3000);
     
     return () => clearTimeout(timer);
@@ -52,22 +52,23 @@ export default function SuccessPage() {
             ✅ Your 2-day free trial is now active
           </p>
           <p style={{ color: '#aaa', marginBottom: '16px', lineHeight: '1.6' }}>
-            📧 Check your email for your login credentials:
+            📧 Check your email for your <strong style={{ color: '#8B5CF6' }}>password setup link</strong>:
           </p>
           <ul style={{ color: '#888', fontSize: '14px', paddingLeft: '20px', lineHeight: '2' }}>
             <li>📧 Check your inbox (and spam folder)</li>
-            <li>🔐 Use the temporary password provided</li>
-            <li>🔑 Log in and access Inner Circle</li>
+            <li>🔗 Click "Set Up Password" link</li>
+            <li>🔑 Create your password</li>
+            <li>🚀 Access Inner Circle dashboard</li>
           </ul>
         </div>
 
         <p style={{ color: '#666', fontSize: '14px', marginBottom: '20px' }}>
-          Redirecting to dashboard in 3 seconds...
+          Redirecting to login in 3 seconds...
         </p>
 
         <div style={{ display: 'flex', gap: '16px', justifyContent: 'center' }}>
           <a
-            href="/dashboard"
+            href="/login"
             style={{
               padding: '14px 32px',
               borderRadius: '8px',
@@ -81,7 +82,7 @@ export default function SuccessPage() {
               boxShadow: '0 8px 32px rgba(139, 92, 246, 0.3)'
             }}
           >
-            Go to Dashboard Now
+            Go to Login
           </a>
         </div>
       </div>

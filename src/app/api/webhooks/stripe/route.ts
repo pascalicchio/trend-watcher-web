@@ -15,7 +15,10 @@ export async function POST(request: NextRequest) {
     const body = await request.text();
     const sig = request.headers.get('stripe-signature');
 
+    console.log('📨 Webhook received! Signature:', sig ? 'present' : 'MISSING');
+
     if (!sig) {
+      console.error('❌ Missing stripe-signature header');
       return NextResponse.json({ error: 'Missing signature' }, { status: 400 });
     }
 
@@ -24,7 +27,7 @@ export async function POST(request: NextRequest) {
     try {
       event = stripe.webhooks.constructEvent(body, sig, WEBHOOK_SECRET);
     } catch (err: any) {
-      console.error('Webhook signature verification failed:', err.message);
+      console.error('❌ Webhook signature verification failed:', err.message);
       return NextResponse.json({ error: 'Invalid signature' }, { status: 400 });
     }
 
@@ -33,6 +36,7 @@ export async function POST(request: NextRequest) {
     switch (event.type) {
       case 'checkout.session.completed': {
         const session = event.data.object as Stripe.Checkout.Session;
+        console.log('Checkout session:', { id: session.id, customer_email: session.customer_email });
         await handleCheckoutComplete(session);
         break;
       }
@@ -50,7 +54,8 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ received: true });
   } catch (error: any) {
-    console.error('Webhook error:', error.message);
+    console.error('❌ Webhook error:', error.message);
+    console.error('Stack:', error.stack);
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
@@ -65,18 +70,20 @@ async function handleCheckoutComplete(session: Stripe.Checkout.Session) {
   const email = session.customer_details?.email || session.customer_email;
   const customerId = session.customer as string;
 
+  console.log('🔄 Processing checkout for:', email);
+
   if (!email) {
-    console.error('No email in checkout session');
+    console.error('❌ No email in checkout session!');
     return;
   }
 
-  console.log('Processing checkout for:', email);
-
   // Check if user already exists
   const existingUser = await db.users.findByEmail(email);
+  console.log('Existing user found:', existingUser ? 'YES' : 'NO');
 
   if (existingUser) {
-    // User exists, update subscription
+    console.log('Updating existing user:', existingUser.id);
+    
     await db.users.update(existingUser.id!, {
       stripe_customer_id: customerId,
       subscription: 'inner-circle'
@@ -91,7 +98,7 @@ async function handleCheckoutComplete(session: Stripe.Checkout.Session) {
       end_date: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString()
     });
 
-    console.log('Updated existing user subscription:', existingUser.id);
+    console.log('✅ Updated existing user subscription:', existingUser.id);
     return;
   }
 
@@ -99,10 +106,12 @@ async function handleCheckoutComplete(session: Stripe.Checkout.Session) {
   const setupToken = crypto.randomBytes(32).toString('hex');
   const setupExpires = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000); // 7 days
 
+  console.log('🆕 Creating new user...');
+
   // Create new user (no password yet, will be set via setup link)
   const user = await db.users.create({
     email,
-    password: '', // Empty until user sets password via setup link
+    password: '',
     name: session.customer_details?.name || email.split('@')[0],
     role: 'user',
     subscription: 'inner-circle',
@@ -110,6 +119,8 @@ async function handleCheckoutComplete(session: Stripe.Checkout.Session) {
     setup_token: setupToken,
     setup_expires: setupExpires.toISOString()
   });
+
+  console.log('✅ Created user:', user.id);
 
   // Create subscription record
   await db.subscriptions.create({
@@ -121,10 +132,12 @@ async function handleCheckoutComplete(session: Stripe.Checkout.Session) {
     end_date: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString()
   });
 
-  console.log('✅ Created new user with setup token:', user.id);
+  console.log('✅ Created subscription');
 
   // Send welcome email with password setup link
-  await sendWelcomeEmail(email, setupToken);
+  console.log('📧 Sending welcome email to:', email);
+  const emailSent = await sendWelcomeEmail(email, setupToken);
+  console.log('📧 Email sent:', emailSent ? 'YES' : 'NO');
 
   return { userId: user.id };
 }
@@ -135,11 +148,4 @@ async function handleCheckoutComplete(session: Stripe.Checkout.Session) {
 async function handleSubscriptionChange(subscription: Stripe.Subscription) {
   const customerId = subscription.customer as string;
   console.log('Subscription changed:', { customerId, status: subscription.status });
-}
-
-/**
- * Generate unique username (for reference, not used for login)
- */
-function generateUsername(email: string): string {
-  return email.split('@')[0] + '_' + Math.random().toString(36).substring(2, 8);
 }
