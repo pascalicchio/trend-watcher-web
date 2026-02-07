@@ -45,7 +45,7 @@ async function sendEmail(to: string, subject: string, html: string, text: string
         },
         body: JSON.stringify({
           sender: { email: BREVO_FROM_EMAIL, name: 'TrendWatcher' },
-          to: [{ email, name: to }],
+          to: [{ email: to, name: to }],
           subject,
           htmlContent: html,
           textContent: text
