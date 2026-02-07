@@ -59,11 +59,27 @@ export default function DashboardOverview() {
         const userData = await userRes.json();
         const cardsData = await cardsRes.json();
         
+        // Check if user was deleted or subscription expired
+        if (userData.forceLogout || userData.error === 'Account not found' || userData.error === 'Subscription expired') {
+          console.log('⚠️ Force logout triggered:', userData.error);
+          // Clear auth cookie and redirect to login
+          document.cookie = 'auth_token=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT';
+          window.location.href = '/login?reason=' + (userData.error || 'session_expired');
+          return;
+        }
+        
+        if (!userRes.ok) {
+          console.error('Profile error:', userData.error);
+          window.location.href = '/login';
+          return;
+        }
+        
         console.log('[Dashboard] User data:', userData.user);
         setUser(userData.user);
         setCards(cardsData.cards || []);
       } catch (error) {
         console.error('Error fetching dashboard data:', error);
+        window.location.href = '/login';
       } finally {
         setLoading(false);
       }

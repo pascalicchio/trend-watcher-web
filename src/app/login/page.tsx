@@ -1,7 +1,7 @@
 'use client';
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useState, useEffect } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 
 export default function LoginPage() {
@@ -10,6 +10,20 @@ export default function LoginPage() {
   const [error, setError] = useState<string | React.ReactNode>('');
   const [loading, setLoading] = useState(false);
   const router = useRouter();
+  const searchParams = useSearchParams();
+  
+  const reason = searchParams.get('reason');
+
+  useEffect(() => {
+    // Show message if redirected due to session issue
+    if (reason === 'session_expired') {
+      setError('Your session has expired. Please log in again.');
+    } else if (reason === 'account_deleted') {
+      setError('Your account has been deleted.');
+    } else if (reason === 'subscription_expired') {
+      setError('Your subscription has expired. Please renew to access the dashboard.');
+    }
+  }, [reason]);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();

@@ -11,6 +11,7 @@ export interface UserPayload {
   role: 'user' | 'admin';
   subscription: 'free' | 'inner-circle';
   expiresAt?: number;
+  subscriptionExpires?: string;
 }
 
 export async function createToken(payload: UserPayload): Promise<string> {
@@ -52,4 +53,24 @@ export function hasSubscription(user: UserPayload): boolean {
 
 export function isAdmin(user: UserPayload): boolean {
   return user.role === 'admin';
+}
+
+/**
+ * Verify user is still valid (account not deleted, subscription active)
+ * This should be called on every protected API request
+ */
+export async function verifyUserSession(token: string): Promise<{
+  valid: boolean;
+  user?: UserPayload;
+  error?: string;
+}> {
+  // First verify the token itself
+  const payload = await verifyToken(token);
+  if (!payload) {
+    return { valid: false, error: 'Invalid token' };
+  }
+
+  // Check if user still exists and is active
+  // This requires DB lookup - will be done in API routes
+  return { valid: true, user: payload };
 }
