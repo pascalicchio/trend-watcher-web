@@ -8,26 +8,20 @@ export const dynamic = 'force-dynamic';
 export async function GET(request: NextRequest) {
   try {
     const token = getTokenFromRequest(request);
-    console.log('🔍 Profile request - Token exists:', !!token);
     
     if (!token) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
     
     const payload = await verifyToken(token);
-    console.log('🔍 Token payload:', payload?.id);
-    
     if (!payload) {
       return NextResponse.json({ error: 'Invalid token' }, { status: 401 });
     }
     
-    // CRITICAL: Verify user still exists in database
-    console.log('🔍 Looking up user:', payload.id);
+    // Verify user still exists in database
     const user = await db.users.findById(payload.id);
-    console.log('🔍 User found in DB:', !!user);
     
     if (!user) {
-      console.log('❌ User not found - account may have been deleted');
       return NextResponse.json({ 
         error: 'Account not found',
         forceLogout: true 
@@ -37,14 +31,13 @@ export async function GET(request: NextRequest) {
       });
     }
     
-    // CRITICAL: Check subscription expiration
+    // Check subscription expiration
     const subscriptions = await db.subscriptions.findByUserId(user.id!);
     const activeSub = subscriptions.find(s => s.status === 'active');
     
     if (activeSub && activeSub.end_date) {
       const endDate = new Date(activeSub.end_date);
       if (endDate < new Date()) {
-        console.log('❌ Subscription expired:', activeSub.end_date);
         return NextResponse.json({ 
           error: 'Subscription expired',
           expiredAt: activeSub.end_date,
