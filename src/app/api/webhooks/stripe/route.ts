@@ -71,11 +71,19 @@ export async function POST(request: NextRequest) {
 async function handleCheckoutComplete(session: Stripe.Checkout.Session) {
   const email = session.customer_details?.email || session.customer_email;
   const customerId = session.customer as string;
+  const paymentIntent = session.payment_intent as string;
 
   console.log('🔄 Processing checkout for:', email);
 
   if (!email) {
     console.error('❌ No email in session!');
+    return;
+  }
+
+  // Check if subscription already exists for this payment
+  const existingSub = await db.subscriptions.findByPaymentId(paymentIntent);
+  if (existingSub) {
+    console.log('⚠️ Subscription already exists for payment:', paymentIntent);
     return;
   }
 
@@ -85,7 +93,7 @@ async function handleCheckoutComplete(session: Stripe.Checkout.Session) {
   if (user) {
     console.log('👤 Existing user found:', user.id);
     
-    // Update subscription
+    // Update user
     await db.users.update(user.id!, {
       stripe_customer_id: customerId,
       subscription: 'inner-circle'
@@ -95,7 +103,7 @@ async function handleCheckoutComplete(session: Stripe.Checkout.Session) {
     await db.subscriptions.create({
       user_id: user.id!,
       plan: 'inner-circle',
-      stripe_payment_id: session.payment_intent as string,
+      stripe_payment_id: paymentIntent,
       status: 'active',
       start_date: new Date().toISOString(),
       end_date: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString()
@@ -138,7 +146,7 @@ async function handleCheckoutComplete(session: Stripe.Checkout.Session) {
     await db.subscriptions.create({
       user_id: user.id!,
       plan: 'inner-circle',
-      stripe_payment_id: session.payment_intent as string,
+      stripe_payment_id: paymentIntent,
       status: 'active',
       start_date: new Date().toISOString(),
       end_date: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString()

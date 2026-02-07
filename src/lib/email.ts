@@ -221,3 +221,263 @@ If you didn't request this, you can safely ignore this email.
 
   return await sendEmail(email, subject, html, text);
 }
+
+/**
+ * Send Intelligence Card notification email
+ */
+export async function sendIntelligenceCardEmail(email: string, cardData: {
+  title: string;
+  summary: {
+    totalTrends: number;
+    topMover: string;
+    avgVelocity: number;
+  };
+  products: Array<{
+    name: string;
+    velocity: number;
+    saturation: number;
+    emoji: string;
+  }>;
+}): Promise<boolean> {
+  const dashboardUrl = 'https://trendwatcher.io/dashboard';
+  const topProducts = cardData.products.slice(0, 3).map(p => `
+    <div style="display: flex; align-items: center; gap: 12px; padding: 12px; background: rgba(0, 201, 255, 0.1); border-radius: 8px; margin-bottom: 8px;">
+      <span style="font-size: 24px;">${p.emoji}</span>
+      <div>
+        <div style="font-weight: 600; color: ${BRAND_COLORS.textPrimary};">${p.name}</div>
+        <div style="font-size: 13px; color: ${BRAND_COLORS.textSecondary};">
+          Velocity: ${p.velocity}% | Saturation: ${p.saturation.toFixed(1)}
+        </div>
+      </div>
+    </div>
+  `).join('');
+
+  const subject = `📊 ${cardData.title} - ${cardData.summary.totalTrends} Trends Detected`;
+
+  const html = `
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>${subject}</title>
+</head>
+<body style="margin: 0; padding: 0; background: ${BRAND_COLORS.background}; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;">
+  <div style="max-width: 600px; margin: 0 auto; padding: 40px 20px;">
+    <!-- Logo -->
+    <div style="text-align: center; margin-bottom: 40px;">
+      <span style="font-size: 24px; font-weight: 300; color: ${BRAND_COLORS.textPrimary};">trend</span>
+      <span style="font-size: 24px; font-weight: 800; background: ${BRAND_GRADIENT}; -webkit-background-clip: text; -webkit-text-fill-color: transparent;">watcher</span>
+    </div>
+
+    <!-- Main Card -->
+    <div style="background: ${BRAND_COLORS.card}; border: 1px solid ${BRAND_COLORS.cardBorder}; border-radius: 16px; padding: 40px;">
+      <div style="font-size: 48px; text-align: center; margin-bottom: 24px;">📊</div>
+      
+      <h1 style="font-size: 24px; font-weight: 700; color: ${BRAND_COLORS.textPrimary}; margin: 0 0 16px 0; text-align: center;">
+        ${cardData.title}
+      </h1>
+      
+      <p style="color: ${BRAND_COLORS.textSecondary}; font-size: 16px; line-height: 1.6; margin: 0 0 32px 0; text-align: center;">
+        <strong style="color: ${BRAND_COLORS.accent};">${cardData.summary.totalTrends} trends</strong> detected. 
+        Top mover: <strong>${cardData.summary.topMover}</strong>
+      </p>
+
+      <!-- Top Products -->
+      <div style="margin-bottom: 32px;">
+        <h3 style="font-size: 16px; font-weight: 600; color: ${BRAND_COLORS.textPrimary}; margin: 0 0 16px 0;">
+          🚀 Top Opportunities
+        </h3>
+        ${topProducts}
+      </div>
+
+      <!-- CTA Button -->
+      <div style="text-align: center; margin-bottom: 32px;">
+        <a href="${dashboardUrl}" style="display: inline-block; padding: 16px 32px; background: ${BRAND_GRADIENT}; border-radius: 8px; color: #000; font-size: 16px; font-weight: 600; text-decoration: none;">
+          View Full Report
+        </a>
+      </div>
+
+      <p style="color: ${BRAND_COLORS.textMuted}; font-size: 14px; text-align: center; margin: 0;">
+        Avg. Velocity: <strong>${cardData.summary.avgVelocity}%</strong>
+      </p>
+    </div>
+
+    <!-- Footer -->
+    <div style="text-align: center; margin-top: 40px; padding-top: 24px; border-top: 1px solid ${BRAND_COLORS.cardBorder};">
+      <p style="color: ${BRAND_COLORS.textMuted}; font-size: 13px; margin: 0;">
+        © 2026 TrendWatcher. <a href="https://trendwatcher.io/settings" style="color: ${BRAND_COLORS.accent};">Manage notifications</a>
+      </p>
+    </div>
+  </div>
+</body>
+</html>`;
+
+  const text = `${cardData.title}
+
+${cardData.summary.totalTrends} trends detected. Top mover: ${cardData.summary.topMover}
+
+View full report: ${dashboardUrl}
+
+© 2026 TrendWatcher`;
+
+  return await sendEmail(email, subject, html, text);
+}
+
+/**
+ * Send subscription confirmation email
+ */
+export async function sendSubscriptionConfirmationEmail(email: string, plan: string): Promise<boolean> {
+  const dashboardUrl = 'https://trendwatcher.io/dashboard';
+  const endDate = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toLocaleDateString();
+
+  const subject = '✅ Welcome to Inner Circle - Your Subscription is Active';
+
+  const html = `
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>${subject}</title>
+</head>
+<body style="margin: 0; padding: 0; background: ${BRAND_COLORS.background}; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;">
+  <div style="max-width: 600px; margin: 0 auto; padding: 40px 20px;">
+    <!-- Logo -->
+    <div style="text-align: center; margin-bottom: 40px;">
+      <span style="font-size: 24px; font-weight: 300; color: ${BRAND_COLORS.textPrimary};">trend</span>
+      <span style="font-size: 24px; font-weight: 800; background: ${BRAND_GRADIENT}; -webkit-background-clip: text; -webkit-text-fill-color: transparent;">watcher</span>
+    </div>
+
+    <!-- Main Card -->
+    <div style="background: ${BRAND_COLORS.card}; border: 1px solid ${BRAND_COLORS.cardBorder}; border-radius: 16px; padding: 40px;">
+      <div style="font-size: 48px; text-align: center; margin-bottom: 24px;">✅</div>
+      
+      <h1 style="font-size: 24px; font-weight: 700; color: ${BRAND_COLORS.textPrimary}; margin: 0 0 16px 0; text-align: center;">
+        You're In! Inner Circle Activated
+      </h1>
+      
+      <p style="color: ${BRAND_COLORS.textSecondary}; font-size: 16px; line-height: 1.6; margin: 0 0 32px 0; text-align: center;">
+        Your subscription is now active. You have full access to:
+      </p>
+
+      <ul style="color: ${BRAND_COLORS.textSecondary}; font-size: 15px; line-height: 2; margin: 0 0 32px 0; padding-left: 24px;">
+        <li>📈 Daily Intelligence Cards</li>
+        <li>🚀 Early Trend Detection</li>
+        <li>💰 Saturation Analysis</li>
+        <li>📊 Competitor Insights</li>
+      </ul>
+
+      <!-- CTA Button -->
+      <div style="text-align: center; margin-bottom: 32px;">
+        <a href="${dashboardUrl}" style="display: inline-block; padding: 16px 32px; background: ${BRAND_GRADIENT}; border-radius: 8px; color: #000; font-size: 16px; font-weight: 600; text-decoration: none;">
+          Access Dashboard
+        </a>
+      </div>
+
+      <p style="color: ${BRAND_COLORS.textMuted}; font-size: 14px; text-align: center; margin: 0;">
+        Next billing date: <strong>${endDate}</strong>
+      </p>
+    </div>
+
+    <!-- Footer -->
+    <div style="text-align: center; margin-top: 40px; padding-top: 24px; border-top: 1px solid ${BRAND_COLORS.cardBorder};">
+      <p style="color: ${BRAND_COLORS.textMuted}; font-size: 13px; margin: 0;">
+        © 2026 TrendWatcher. All rights reserved.
+      </p>
+    </div>
+  </div>
+</body>
+</html>`;
+
+  const text = `Welcome to Inner Circle!
+
+Your subscription is active. Next billing date: ${endDate}
+
+Access your dashboard: ${dashboardUrl}
+
+© 2026 TrendWatcher`;
+
+  return await sendEmail(email, subject, html, text);
+}
+
+/**
+ * Send trial ending reminder
+ */
+export async function sendTrialEndingReminder(email: string, daysLeft: number): Promise<boolean> {
+  const pricingUrl = 'https://trendwatcher.io/pricing';
+
+  const subject = `⏰ ${daysLeft} Days Left in Your Trial`;
+
+  const html = `
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>${subject}</title>
+</head>
+<body style="margin: 0; padding: 0; background: ${BRAND_COLORS.background}; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;">
+  <div style="max-width: 600px; margin: 0 auto; padding: 40px 20px;">
+    <!-- Logo -->
+    <div style="text-align: center; margin-bottom: 40px;">
+      <span style="font-size: 24px; font-weight: 300; color: ${BRAND_COLORS.textPrimary};">trend</span>
+      <span style="font-size: 24px; font-weight: 800; background: ${BRAND_GRADIENT}; -webkit-background-clip: text; -webkit-text-fill-color: transparent;">watcher</span>
+    </div>
+
+    <!-- Main Card -->
+    <div style="background: ${BRAND_COLORS.card}; border: 1px solid ${BRAND_COLORS.cardBorder}; border-radius: 16px; padding: 40px;">
+      <div style="font-size: 48px; text-align: center; margin-bottom: 24px;">⏰</div>
+      
+      <h1 style="font-size: 24px; font-weight: 700; color: ${BRAND_COLORS.textPrimary}; margin: 0 0 16px 0; text-align: center;">
+        ${daysLeft} Days Left in Your Trial
+      </h1>
+      
+      <p style="color: ${BRAND_COLORS.textSecondary}; font-size: 16px; line-height: 1.6; margin: 0 0 32px 0; text-align: center;">
+        Don't lose access to your trends! Upgrade to Inner Circle before your trial ends.
+      </p>
+
+      <!-- Stats -->
+      <div style="display: flex; gap: 16px; margin-bottom: 32px;">
+        <div style="flex: 1; text-align: center; padding: 16px; background: rgba(0, 201, 255, 0.1); border-radius: 8px;">
+          <div style="font-size: 24px; font-weight: 700; color: ${BRAND_COLORS.accent};">${daysLeft}</div>
+          <div style="font-size: 12px; color: ${BRAND_COLORS.textSecondary};">Days Left</div>
+        </div>
+        <div style="flex: 1; text-align: center; padding: 16px; background: rgba(146, 254, 157, 0.1); border-radius: 8px;">
+          <div style="font-size: 24px; font-weight: 700; color: #92FE9D;">$49</div>
+          <div style="font-size: 12px; color: ${BRAND_COLORS.textSecondary};">Per Month</div>
+        </div>
+      </div>
+
+      <!-- CTA Button -->
+      <div style="text-align: center; margin-bottom: 32px;">
+        <a href="${pricingUrl}" style="display: inline-block; padding: 16px 32px; background: ${BRAND_GRADIENT}; border-radius: 8px; color: #000; font-size: 16px; font-weight: 600; text-decoration: none;">
+          Upgrade Now
+        </a>
+      </div>
+
+      <p style="color: ${BRAND_COLORS.textMuted}; font-size: 14px; text-align: center; margin: 0;">
+        Questions? Reply to this email.
+      </p>
+    </div>
+
+    <!-- Footer -->
+    <div style="text-align: center; margin-top: 40px; padding-top: 24px; border-top: 1px solid ${BRAND_COLORS.cardBorder};">
+      <p style="color: ${BRAND_COLORS.textMuted}; font-size: 13px; margin: 0;">
+        © 2026 TrendWatcher. <a href="https://trendwatcher.io/settings" style="color: ${BRAND_COLORS.accent};">Cancel trial</a>
+      </p>
+    </div>
+  </div>
+</body>
+</html>`;
+
+  const text = `${daysLeft} Days Left in Your Trial!
+
+Don't lose access to your trends. Upgrade to Inner Circle for $49/month.
+
+Upgrade: ${pricingUrl}
+
+© 2026 TrendWatcher`;
+
+  return await sendEmail(email, subject, html, text);
+}
