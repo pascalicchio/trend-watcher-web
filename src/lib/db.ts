@@ -3,8 +3,14 @@
 
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 
-// Types
-export interface User {
+// Explicit Supabase URL for Vercel - FORCE the correct project
+const supabaseUrl = 'https://qijbkikzcvpaqztlitbj.supabase.co';
+const supabaseAnonKey = process.env.SUPABASE_ANON_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
+
+export const supabase: SupabaseClient | null = 
+  supabaseUrl && supabaseAnonKey 
+    ? createClient(supabaseUrl, supabaseAnonKey)
+    : null;
   id?: string;
   email: string;
   password?: string;
@@ -92,7 +98,6 @@ export const db = {
   // Users
   users: {
     findByEmail: async (email: string): Promise<User | null> => {
-      console.log('🔍 Using DB provider:', useSupabase ? 'supabase' : 'file');
       if (useSupabase) {
         const { data } = await supabase!.from('users').select('*').eq('email', email).single();
         return data;
@@ -101,7 +106,7 @@ export const db = {
       return data.users.find((u: User) => u.email === email);
     },
     findById: async (id: string): Promise<User | null> => {
-      console.log('🔍 DB looking for user by id:', id, 'provider:', useSupabase ? 'supabase' : 'file');
+      console.log('🔍 DB looking for user by id:', id, '| URL:', supabaseUrl);
       if (useSupabase) {
         const { data } = await supabase!.from('users').select('*').eq('id', id).single();
         console.log('🔍 DB result:', data?.email || 'null');
