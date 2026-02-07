@@ -30,12 +30,12 @@ export async function POST(request: NextRequest) {
         price: priceId,
         quantity: 1,
       }],
-      success_url: `${APP_URL}/pricing/success`,
-      cancel_url: `${APP_URL}/pricing?canceled=true`,
+      // REDIRECT DIRECTLY TO SET-PASSWORD AFTER PAYMENT!
+      success_url: `${APP_URL}/set-password?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${APP_URL}/?canceled=true`,
       subscription_data: {
         trial_period_days: 2,
       },
-      // Collect email during checkout
       phone_number_collection: { enabled: true },
     });
     
