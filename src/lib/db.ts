@@ -14,6 +14,8 @@ export interface User {
   stripe_customer_id?: string;
   reset_token?: string;
   reset_token_expires?: string;
+  setup_token?: string;
+  setup_expires?: string;
   created_at?: string;
   updated_at?: string;
 }
