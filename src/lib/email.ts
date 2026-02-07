@@ -1,10 +1,75 @@
 import sgMail from '@sendgrid/mail';
 
+// SendGrid configuration
 const SENDGRID_API_KEY = process.env.SENDGRID_API_KEY;
 const FROM_EMAIL = process.env.FROM_EMAIL || 'alerts@trendwatcher.io';
 
 if (SENDGRID_API_KEY) {
   sgMail.setApiKey(SENDGRID_API_KEY);
+}
+
+// Brevo configuration (alternative to SendGrid)
+const BREVO_API_KEY = process.env.BREVO_API_KEY;
+const BREVO_FROM_EMAIL = process.env.BREVO_FROM_EMAIL || FROM_EMAIL;
+
+/**
+ * Send email via SendGrid or Brevo
+ */
+async function sendEmail(to: string, subject: string, html: string, text: string): Promise<boolean> {
+  // Try SendGrid first
+  if (SENDGRID_API_KEY) {
+    try {
+      await sgMail.send({
+        to,
+        from: {
+          email: FROM_EMAIL,
+          name: 'TrendWatcher'
+        },
+        subject,
+        html,
+        text
+      });
+      console.log(`✅ Email sent via SendGrid to ${to}`);
+      return true;
+    } catch (error: any) {
+      console.error('SendGrid error:', error.message);
+    }
+  }
+
+  // Fall back to Brevo
+  if (BREVO_API_KEY) {
+    try {
+      const response = await fetch('https://api.brevo.com/v3/smtp/email', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'api-key': BREVO_API_KEY
+        },
+        body: JSON.stringify({
+          sender: {
+            name: 'TrendWatcher',
+            email: BREVO_FROM_EMAIL
+          },
+          to: [{ email: to }],
+          subject,
+          htmlContent: html,
+          textContent: text
+        })
+      });
+
+      if (response.ok) {
+        console.log(`✅ Email sent via Brevo to ${to}`);
+        return true;
+      }
+      const error = await response.text();
+      console.error('Brevo error:', error);
+    } catch (error: any) {
+      console.error('Brevo error:', error.message);
+    }
+  }
+
+  console.error('❌ No email provider configured');
+  return false;
 }
 
 /**
@@ -13,14 +78,9 @@ if (SENDGRID_API_KEY) {
 export async function sendCredentialsEmail(email: string, username: string, password: string): Promise<boolean> {
   const loginUrl = 'https://trendwatcher.io/login';
 
-  const msg = {
-    to: email,
-    from: {
-      email: FROM_EMAIL,
-      name: 'TrendWatcher'
-    },
-    subject: '🎉 Welcome to TrendWatcher - Your Inner Circle Access',
-    html: `
+  const subject = '🎉 Welcome to TrendWatcher - Your Inner Circle Access';
+
+  const html = `
 <!DOCTYPE html>
 <html>
 <head>
@@ -42,7 +102,7 @@ export async function sendCredentialsEmail(email: string, username: string, pass
     <div style="background: #1a1a1a; border-radius: 16px; padding: 32px; margin-bottom: 24px;">
       <h2 style="color: #fff; margin: 0 0 16px 0; font-size: 24px;">🎉 Welcome to the Inner Circle!</h2>
       <p style="color: #aaa; line-height: 1.6; margin: 0 0 24px 0;">
-        Your payment was successful and you're now part of the Inner Circle. Here are your login credentials:
+        Your 2-day free trial is now active. Here are your login credentials:
       </p>
 
       <!-- Credentials Box -->
@@ -58,7 +118,7 @@ export async function sendCredentialsEmail(email: string, username: string, pass
       </div>
 
       <p style="color: #f59e0b; font-size: 14px; margin: 20px 0 0 0;">
-        ⚠️ Please change your password after your first login for security.
+        ⚠️ Please change your password after your first login.
       </p>
     </div>
 
@@ -72,61 +132,50 @@ export async function sendCredentialsEmail(email: string, username: string, pass
 
     <!-- Features -->
     <div style="border-top: 1px solid #333; padding-top: 24px;">
-      <p style="color: #888; font-size: 14px; margin: 0 0 16px 0;">As an Inner Circle member, you now have access to:</p>
+      <p style="color: #888; font-size: 14px; margin: 0 0 16px 0;">Your Inner Circle benefits:</p>
       <ul style="color: #aaa; font-size: 14px; line-height: 1.8; padding-left: 20px; margin: 0;">
-        <li>📈 Daily Top 5 trending products before anyone else</li>
-        <li>🔔 Real-time velocity and saturation alerts</li>
-        <li>🎯 Supplier sourcing links for every product</li>
-        <li>📊 Historical performance tracking</li>
+        <li>📈 Daily Top 5 trending products</li>
+        <li>🔔 Real-time velocity & saturation alerts</li>
+        <li>🏭 Supplier sourcing links</li>
+        <li>📊 Historical trend tracking</li>
       </ul>
     </div>
 
     <!-- Footer -->
     <div style="text-align: center; margin-top: 40px; padding-top: 24px; border-top: 1px solid #222;">
-      <p style="color: #555; font-size: 12px; margin: 0;">
-        Need help? Reply to this email or join our Discord.
-      </p>
-      <p style="color: #555; font-size: 12px; margin: 8px 0 0 0;">
-        © 2026 TrendWatcher. All rights reserved.
-      </p>
+      <p style="color: #555; font-size: 12px; margin: 0;">Questions? Reply to this email.</p>
+      <p style="color: #555; font-size: 12px; margin: 8px 0 0 0;">© 2026 TrendWatcher. All rights reserved.</p>
     </div>
   </div>
 </body>
 </html>
-    `,
-    text: `
+  `;
+
+  const text = `
 🎉 Welcome to TrendWatcher - Inner Circle Access!
 
-Your payment was successful! Here are your login credentials:
+Your 2-day free trial is now active!
 
+Login credentials:
 Username: ${username}
 Password: ${password}
 
-Login at: ${loginUrl}
+Login: ${loginUrl}
 
 ⚠️ Please change your password after your first login.
 
-As an Inner Circle member, you now have access to:
-- Daily Top 5 trending products before anyone else
-- Real-time velocity and saturation alerts
-- Supplier sourcing links for every product
-- Historical performance tracking
+Your Inner Circle benefits:
+- Daily Top 5 trending products
+- Real-time velocity & saturation alerts
+- Supplier sourcing links
+- Historical trend tracking
 
-Need help? Reply to this email.
-    `
-  };
+Questions? Reply to this email.
 
-  try {
-    await sgMail.send(msg);
-    console.log(`✅ Credentials email sent to ${email}`);
-    return true;
-  } catch (error: any) {
-    console.error('Failed to send credentials email:', error.message);
-    if (error.response?.body) {
-      console.error('SendGrid error:', error.response.body);
-    }
-    return false;
-  }
+© 2026 TrendWatcher
+  `;
+
+  return sendEmail(email, subject, html, text);
 }
 
 /**
@@ -135,14 +184,9 @@ Need help? Reply to this email.
 export async function sendResetEmail(email: string, resetToken: string): Promise<boolean> {
   const resetUrl = `https://trendwatcher.io/reset-password?token=${resetToken}`;
 
-  const msg = {
-    to: email,
-    from: {
-      email: FROM_EMAIL,
-      name: 'TrendWatcher'
-    },
-    subject: '🔐 Password Reset - TrendWatcher',
-    html: `
+  const subject = '🔐 Password Reset - TrendWatcher';
+
+  const html = `
 <!DOCTYPE html>
 <html>
 <head>
@@ -159,9 +203,9 @@ export async function sendResetEmail(email: string, resetToken: string): Promise
     </div>
 
     <div style="background: #1a1a1a; border-radius: 16px; padding: 32px;">
-      <h2 style="color: #fff; margin: 0 0 16px 0;">Password Reset Request</h2>
+      <h2 style="color: #fff; margin: 0 0 16px 0; font-size: 24px;">Password Reset Request</h2>
       <p style="color: #aaa; line-height: 1.6;">
-        You requested a password reset. Click the button below to set a new password:
+        Click below to reset your password:
       </p>
 
       <div style="text-align: center; margin: 32px 0;">
@@ -172,21 +216,21 @@ export async function sendResetEmail(email: string, resetToken: string): Promise
       </div>
 
       <p style="color: #f59e0b; font-size: 14px;">
-        ⚠️ This link expires in 1 hour. If you didn't request this, ignore this email.
+        ⚠️ This link expires in 1 hour.
       </p>
     </div>
   </div>
 </body>
 </html>
-    `
-  };
+  `;
 
-  try {
-    await sgMail.send(msg);
-    console.log(`✅ Reset email sent to ${email}`);
-    return true;
-  } catch (error: any) {
-    console.error('Failed to send reset email:', error.message);
-    return false;
-  }
+  const text = `
+🔐 Password Reset - TrendWatcher
+
+Click here to reset your password: ${resetUrl}
+
+This link expires in 1 hour.
+  `;
+
+  return sendEmail(email, subject, html, text);
 }
