@@ -1,4 +1,5 @@
 import sgMail from '@sendgrid/mail';
+import nodemailer from 'nodemailer';
 
 // SendGrid configuration
 const SENDGRID_API_KEY = process.env.SENDGRID_API_KEY;
@@ -11,6 +12,10 @@ if (SENDGRID_API_KEY) {
 // Brevo configuration (alternative to SendGrid)
 const BREVO_API_KEY = process.env.BREVO_API_KEY;
 const BREVO_FROM_EMAIL = process.env.BREVO_FROM_EMAIL || FROM_EMAIL;
+const BREVO_SMTP_HOST = process.env.BREVO_SMTP_HOST || 'smtp-brevo.com';
+const BREVO_SMTP_PORT = parseInt(process.env.BREVO_SMTP_PORT || '587');
+const BREVO_SMTP_USER = process.env.BREVO_SMTP_USER;
+const BREVO_SMTP_PASS = process.env.BREVO_SMTP_PASS;
 
 /**
  * Send email via SendGrid or Brevo
@@ -36,7 +41,7 @@ async function sendEmail(to: string, subject: string, html: string, text: string
     }
   }
 
-  // Fall back to Brevo
+  // Try Brevo API
   if (BREVO_API_KEY) {
     try {
       const response = await fetch('https://api.brevo.com/v3/smtp/email', {
@@ -58,13 +63,41 @@ async function sendEmail(to: string, subject: string, html: string, text: string
       });
 
       if (response.ok) {
-        console.log(`✅ Email sent via Brevo to ${to}`);
+        console.log(`✅ Email sent via Brevo API to ${to}`);
         return true;
       }
       const error = await response.text();
-      console.error('Brevo error:', error);
+      console.error('Brevo API error:', error);
     } catch (error: any) {
-      console.error('Brevo error:', error.message);
+      console.error('Brevo API error:', error.message);
+    }
+  }
+
+  // Fall back to Brevo SMTP
+  if (BREVO_SMTP_USER && BREVO_SMTP_PASS) {
+    try {
+      const transporter = nodemailer.createTransporter({
+        host: BREVO_SMTP_HOST,
+        port: BREVO_SMTP_PORT,
+        secure: BREVO_SMTP_PORT === 465,
+        auth: {
+          user: BREVO_SMTP_USER,
+          pass: BREVO_SMTP_PASS
+        }
+      });
+
+      await transporter.sendMail({
+        from: `"TrendWatcher" <${BREVO_FROM_EMAIL}>`,
+        to,
+        subject,
+        html,
+        text
+      });
+
+      console.log(`✅ Email sent via Brevo SMTP to ${to}`);
+      return true;
+    } catch (error: any) {
+      console.error('Brevo SMTP error:', error.message);
     }
   }
 
