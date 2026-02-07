@@ -177,19 +177,15 @@ export const db = {
       const data = readFileDB();
       return data.subscriptions.filter((s: Subscription) => s.user_id === userId);
     },
-    create: async (subscription: Subscription): Promise<Subscription> => {
-      // Check for duplicate by payment_id (avoid circular reference by checking here)
-      if (subscription.stripe_payment_id && useSupabase) {
-        const { data } = await supabase!.from('subscriptions')
-          .select('*')
-          .eq('stripe_payment_id', subscription.stripe_payment_id)
-          .single();
-        if (data) {
-          console.log('⚠️ Subscription already exists for payment:', subscription.stripe_payment_id);
-          return data;
-        }
+    findByPaymentId: async (paymentId: string): Promise<Subscription | null> => {
+      if (useSupabase) {
+        const { data } = await supabase!.from('subscriptions').select('*').eq('stripe_payment_id', paymentId).single();
+        return data || null;
       }
-      
+      const data = readFileDB();
+      return data.subscriptions.find((s: Subscription) => s.stripe_payment_id === paymentId) || null;
+    },
+    create: async (subscription: Subscription): Promise<Subscription> => {
       if (useSupabase) {
         const { data, error } = await supabase!.from('subscriptions').insert(subscription).select().single();
         if (error) throw error;
