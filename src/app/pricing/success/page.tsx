@@ -23,7 +23,7 @@ export default function SuccessPage() {
     }}>
       <div style={{
         background: '#111',
-        border: '1px solid #10B981',
+        border: '1px solid #8B5CF6',
         borderRadius: '20px',
         padding: '60px',
         maxWidth: '500px',
@@ -34,7 +34,7 @@ export default function SuccessPage() {
           fontSize: '32px',
           fontWeight: 'bold',
           marginBottom: '20px',
-          background: 'linear-gradient(135deg, #10B981, #059669)',
+          background: 'linear-gradient(135deg, #8B5CF6, #EC4899)',
           WebkitBackgroundClip: 'text',
           WebkitTextFillColor: 'transparent'
         }}>
@@ -49,15 +49,15 @@ export default function SuccessPage() {
           textAlign: 'left'
         }}>
           <p style={{ color: '#aaa', marginBottom: '16px', lineHeight: '1.6' }}>
-            ✅ Your payment was processed successfully
+            ✅ Your 2-day free trial is now active
           </p>
           <p style={{ color: '#aaa', marginBottom: '16px', lineHeight: '1.6' }}>
-            📧 Check your email for login credentials:
+            📧 Check your email for your login credentials:
           </p>
           <ul style={{ color: '#888', fontSize: '14px', paddingLeft: '20px', lineHeight: '2' }}>
             <li>📧 Check your inbox (and spam folder)</li>
             <li>🔐 Use the temporary password provided</li>
-            <li>🔑 Log in and change your password</li>
+            <li>🔑 Log in and access Inner Circle</li>
           </ul>
         </div>
 
@@ -72,12 +72,13 @@ export default function SuccessPage() {
               padding: '14px 32px',
               borderRadius: '8px',
               border: 'none',
-              background: 'linear-gradient(135deg, #10B981, #059669)',
-              color: '#000',
+              background: 'linear-gradient(135deg, #8B5CF6, #EC4899)',
+              color: '#fff',
               fontWeight: 'bold',
               fontSize: '16px',
               textDecoration: 'none',
-              display: 'inline-block'
+              display: 'inline-block',
+              boxShadow: '0 8px 32px rgba(139, 92, 246, 0.3)'
             }}
           >
             Go to Dashboard Now
