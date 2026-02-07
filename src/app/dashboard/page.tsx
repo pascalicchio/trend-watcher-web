@@ -71,7 +71,6 @@ export default function DashboardOverview() {
   const [cards, setCards] = useState<IntelligenceCard[]>([]);
   const [trends, setTrends] = useState<Trend[]>([]);
   const [loading, setLoading] = useState(true);
-  const [trendsLoading, setTrendsLoading] = useState(false);
   const pathname = usePathname();
 
   useEffect(() => {
@@ -130,7 +129,6 @@ export default function DashboardOverview() {
   // Fetch real trends from Supabase
   useEffect(() => {
     async function fetchTrends() {
-      setTrendsLoading(true);
       try {
         const response = await fetch('/api/trends?limit=20');
         const data = await response.json();
@@ -139,8 +137,6 @@ export default function DashboardOverview() {
         }
       } catch (error) {
         console.error('Error fetching trends:', error);
-      } finally {
-        setTrendsLoading(false);
       }
     }
     
@@ -264,18 +260,12 @@ export default function DashboardOverview() {
         </div>
       </div>
 
-      {/* Live Trends Section */}
+      {/* Live Trends Grid */}
       {trends.length > 0 && (
-        <div style={{
-          background: 'var(--bg-card)',
-          border: '1px solid var(--border-subtle)',
-          borderRadius: '16px',
-          padding: '24px',
-          marginBottom: '32px'
-        }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '24px' }}>
+        <div style={{ marginBottom: '40px' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
             <div>
-              <h2 style={{ fontSize: '20px', fontWeight: '600', marginBottom: '4px' }}>
+              <h2 style={{ fontSize: '24px', fontWeight: '600', marginBottom: '4px' }}>
                 🔥 Live Market Trends
               </h2>
               <p style={{ fontSize: '14px', color: 'var(--text-tertiary)' }}>
@@ -296,45 +286,58 @@ export default function DashboardOverview() {
 
           <div style={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
+            gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))',
             gap: '16px'
           }}>
             {trends.slice(0, 12).map((trend) => (
               <div key={trend.id} style={{
-                padding: '16px',
-                background: 'rgba(0, 0, 0, 0.2)',
-                borderRadius: '12px',
-                border: '1px solid var(--border-subtle)',
-                transition: 'all 0.2s ease'
-              }}>
+                background: 'rgba(255, 255, 255, 0.02)',
+                border: '1px solid rgba(255, 255, 255, 0.08)',
+                borderRadius: '16px',
+                padding: '20px',
+                transition: 'all 0.3s ease',
+                cursor: 'pointer'
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.background = 'rgba(255, 255, 255, 0.04)';
+                e.currentTarget.style.borderColor = 'rgba(139, 92, 246, 0.3)';
+                e.currentTarget.style.transform = 'translateY(-4px)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.background = 'rgba(255, 255, 255, 0.02)';
+                e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.08)';
+                e.currentTarget.style.transform = 'translateY(0)';
+              }}
+              >
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '12px' }}>
                   <span style={{
                     fontSize: '10px',
                     fontWeight: '600',
-                    padding: '4px 8px',
+                    padding: '4px 10px',
                     background: 'rgba(255, 255, 255, 0.05)',
-                    borderRadius: '12px',
-                    color: 'var(--text-tertiary)'
+                    borderRadius: '20px',
+                    color: '#a1a1aa'
                   }}>
                     {trend.source.replace('_', ' ').toUpperCase()}
                   </span>
                   <span style={{
                     fontSize: '10px',
                     fontWeight: '600',
-                    padding: '4px 8px',
-                    borderRadius: '12px',
+                    padding: '4px 10px',
+                    borderRadius: '20px',
                     background: getSaturationColor(trend.saturation),
                     color: '#0a0a0f'
                   }}>
-                    {trend.saturation < 1 ? 'BLUE OCEAN' : `${(trend.saturation * 100).toFixed(1)}%`}
+                    {trend.saturation < 1 ? 'BLUE OCEAN' : `${(trend.saturation * 100).toFixed(1)}% SAT`}
                   </span>
                 </div>
 
                 <h3 style={{ 
-                  fontSize: '14px', 
-                  fontWeight: '500', 
+                  fontSize: '16px', 
+                  fontWeight: '600', 
                   marginBottom: '12px',
                   lineHeight: '1.4',
+                  color: '#fafafa',
                   display: '-webkit-box',
                   WebkitLineClamp: 2,
                   WebkitBoxOrient: 'vertical',
@@ -343,26 +346,51 @@ export default function DashboardOverview() {
                   {trend.title}
                 </h3>
 
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <div style={{ 
+                  display: 'flex', 
+                  justifyContent: 'space-between', 
+                  alignItems: 'center',
+                  paddingTop: '16px',
+                  borderTop: '1px solid rgba(255, 255, 255, 0.05)'
+                }}>
                   <a 
                     href={trend.link} 
                     target="_blank" 
                     rel="noopener noreferrer"
                     style={{
-                      fontSize: '12px',
-                      color: 'var(--accent-purple)',
-                      textDecoration: 'none'
+                      fontSize: '13px',
+                      color: '#8B5CF6',
+                      textDecoration: 'none',
+                      transition: 'color 0.2s'
                     }}
+                    onMouseEnter={(e) => e.currentTarget.style.color = '#EC4899'}
+                    onMouseLeave={(e) => e.currentTarget.style.color = '#8B5CF6'}
                   >
                     View Source →
                   </a>
                   <div style={{
-                    fontSize: '20px',
-                    fontWeight: '700',
-                    color: getVelocityColor(trend.velocity)
+                    display: 'flex',
+                    alignItems: 'baseline',
+                    gap: '4px'
                   }}>
-                    {trend.velocity}
+                    <span style={{ fontSize: '10px', color: '#71717a', textTransform: 'uppercase' }}>VELOCITY</span>
+                    <span style={{
+                      fontSize: '24px',
+                      fontWeight: '700',
+                      color: getVelocityColor(trend.velocity)
+                    }}>
+                      {trend.velocity}
+                    </span>
                   </div>
+                </div>
+
+                <div style={{ 
+                  marginTop: '16px', 
+                  fontSize: '11px', 
+                  color: '#52525b',
+                  textAlign: 'right'
+                }}>
+                  Collected: {new Date(trend.collected_at).toLocaleString()}
                 </div>
               </div>
             ))}
