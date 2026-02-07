@@ -23,6 +23,20 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Check if user needs to set up password first
+    if (!user.password || user.password === '') {
+      if (user.setup_token) {
+        return NextResponse.json(
+          { error: 'setup_required', setupUrl: `/setup-password?token=${user.setup_token}&email=${encodeURIComponent(email)}` },
+          { status: 401 }
+        );
+      }
+      return NextResponse.json(
+        { error: 'Please contact support to activate your account' },
+        { status: 401 }
+      );
+    }
+
     // Verify password hash
     const isValid = await bcrypt.compare(password, user.password || '');
 

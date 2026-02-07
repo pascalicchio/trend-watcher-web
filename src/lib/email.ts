@@ -9,16 +9,15 @@ if (SENDGRID_API_KEY) {
   sgMail.setApiKey(SENDGRID_API_KEY);
 }
 
-// Brevo configuration (alternative to SendGrid)
-const BREVO_API_KEY = process.env.BREVO_API_KEY;
-const BREVO_FROM_EMAIL = process.env.BREVO_FROM_EMAIL || FROM_EMAIL;
-const BREVO_SMTP_HOST = process.env.BREVO_SMTP_HOST || 'smtp-brevo.com';
+// Brevo SMTP configuration
+const BREVO_SMTP_HOST = process.env.BREVO_SMTP_HOST || 'smtp-relay.brevo.com';
 const BREVO_SMTP_PORT = parseInt(process.env.BREVO_SMTP_PORT || '587');
 const BREVO_SMTP_USER = process.env.BREVO_SMTP_USER;
 const BREVO_SMTP_PASS = process.env.BREVO_SMTP_PASS;
+const BREVO_FROM_EMAIL = process.env.BREVO_FROM_EMAIL || FROM_EMAIL;
 
 /**
- * Send email via SendGrid or Brevo
+ * Send email via available provider (SendGrid → Brevo SMTP)
  */
 async function sendEmail(to: string, subject: string, html: string, text: string): Promise<boolean> {
   // Try SendGrid first
@@ -26,10 +25,7 @@ async function sendEmail(to: string, subject: string, html: string, text: string
     try {
       await sgMail.send({
         to,
-        from: {
-          email: FROM_EMAIL,
-          name: 'TrendWatcher'
-        },
+        from: { email: FROM_EMAIL, name: 'TrendWatcher' },
         subject,
         html,
         text
@@ -41,49 +37,14 @@ async function sendEmail(to: string, subject: string, html: string, text: string
     }
   }
 
-  // Try Brevo API
-  if (BREVO_API_KEY) {
-    try {
-      const response = await fetch('https://api.brevo.com/v3/smtp/email', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'api-key': BREVO_API_KEY
-        },
-        body: JSON.stringify({
-          sender: {
-            name: 'TrendWatcher',
-            email: BREVO_FROM_EMAIL
-          },
-          to: [{ email: to }],
-          subject,
-          htmlContent: html,
-          textContent: text
-        })
-      });
-
-      if (response.ok) {
-        console.log(`✅ Email sent via Brevo API to ${to}`);
-        return true;
-      }
-      const error = await response.text();
-      console.error('Brevo API error:', error);
-    } catch (error: any) {
-      console.error('Brevo API error:', error.message);
-    }
-  }
-
-  // Fall back to Brevo SMTP
+  // Try Brevo SMTP
   if (BREVO_SMTP_USER && BREVO_SMTP_PASS) {
     try {
       const transporter = nodemailer.createTransport({
         host: BREVO_SMTP_HOST,
         port: BREVO_SMTP_PORT,
         secure: BREVO_SMTP_PORT === 465,
-        auth: {
-          user: BREVO_SMTP_USER,
-          pass: BREVO_SMTP_PASS
-        }
+        auth: { user: BREVO_SMTP_USER, pass: BREVO_SMTP_PASS }
       });
 
       await transporter.sendMail({
@@ -93,7 +54,6 @@ async function sendEmail(to: string, subject: string, html: string, text: string
         html,
         text
       });
-
       console.log(`✅ Email sent via Brevo SMTP to ${to}`);
       return true;
     } catch (error: any) {
@@ -106,12 +66,12 @@ async function sendEmail(to: string, subject: string, html: string, text: string
 }
 
 /**
- * Send welcome email with login credentials
+ * Send welcome email with password setup link
  */
-export async function sendCredentialsEmail(email: string, username: string, password: string): Promise<boolean> {
-  const loginUrl = 'https://trendwatcher.io/login';
+export async function sendWelcomeEmail(email: string, setupToken: string): Promise<boolean> {
+  const setupUrl = `https://trendwatcher.io/setup-password?token=${setupToken}&email=${encodeURIComponent(email)}`;
 
-  const subject = '🎉 Welcome to TrendWatcher - Your Inner Circle Access';
+  const subject = '🎉 Welcome to TrendWatcher - Set Up Your Password';
 
   const html = `
 <!DOCTYPE html>
@@ -135,35 +95,23 @@ export async function sendCredentialsEmail(email: string, username: string, pass
     <div style="background: #1a1a1a; border-radius: 16px; padding: 32px; margin-bottom: 24px;">
       <h2 style="color: #fff; margin: 0 0 16px 0; font-size: 24px;">🎉 Welcome to the Inner Circle!</h2>
       <p style="color: #aaa; line-height: 1.6; margin: 0 0 24px 0;">
-        Your 2-day free trial is now active. Here are your login credentials:
+        Your 2-day free trial is now active. Your account has been created - now let's set up your password so you can access your dashboard.
       </p>
 
-      <!-- Credentials Box -->
-      <div style="background: #0a0a0a; border-radius: 12px; padding: 24px; border: 1px solid #333;">
-        <div style="margin-bottom: 16px;">
-          <label style="display: block; color: #888; font-size: 12px; text-transform: uppercase; margin-bottom: 4px;">Username</label>
-          <code style="color: #8B5CF6; font-size: 18px; font-family: monospace;">${username}</code>
-        </div>
-        <div>
-          <label style="display: block; color: #888; font-size: 12px; text-transform: uppercase; margin-bottom: 4px;">Password</label>
-          <code style="color: #EC4899; font-size: 18px; font-family: monospace;">${password}</code>
-        </div>
+      <!-- CTA Button -->
+      <div style="text-align: center; margin: 32px 0;">
+        <a href="${setupUrl}"
+           style="display: inline-block; background: linear-gradient(135deg, #8B5CF6 0%, #EC4899 100%); color: white; text-decoration: none; padding: 16px 32px; border-radius: 8px; font-weight: 600; font-size: 16px;">
+          Set Up Password
+        </a>
       </div>
 
-      <p style="color: #f59e0b; font-size: 14px; margin: 20px 0 0 0;">
-        ⚠️ Please change your password after your first login.
+      <p style="color: #f59e0b; font-size: 14px;">
+        ⚠️ This link expires in 7 days.
       </p>
     </div>
 
-    <!-- CTA Button -->
-    <div style="text-align: center; margin-bottom: 32px;">
-      <a href="${loginUrl}"
-         style="display: inline-block; background: linear-gradient(135deg, #8B5CF6 0%, #EC4899 100%); color: white; text-decoration: none; padding: 16px 32px; border-radius: 8px; font-weight: 600;">
-        Access Dashboard
-      </a>
-    </div>
-
-    <!-- Features -->
+    <!-- Benefits -->
     <div style="border-top: 1px solid #333; padding-top: 24px;">
       <p style="color: #888; font-size: 14px; margin: 0 0 16px 0;">Your Inner Circle benefits:</p>
       <ul style="color: #aaa; font-size: 14px; line-height: 1.8; padding-left: 20px; margin: 0;">
@@ -185,17 +133,13 @@ export async function sendCredentialsEmail(email: string, username: string, pass
   `;
 
   const text = `
-🎉 Welcome to TrendWatcher - Inner Circle Access!
+🎉 Welcome to TrendWatcher!
 
-Your 2-day free trial is now active!
+Your 2-day free trial is now active. Set up your password to access your dashboard:
 
-Login credentials:
-Username: ${username}
-Password: ${password}
+${setupUrl}
 
-Login: ${loginUrl}
-
-⚠️ Please change your password after your first login.
+This link expires in 7 days.
 
 Your Inner Circle benefits:
 - Daily Top 5 trending products
@@ -212,7 +156,7 @@ Questions? Reply to this email.
 }
 
 /**
- * Send password reset email
+ * Send password reset email (for existing users who forgot password)
  */
 export async function sendResetEmail(email: string, resetToken: string): Promise<boolean> {
   const resetUrl = `https://trendwatcher.io/reset-password?token=${resetToken}`;

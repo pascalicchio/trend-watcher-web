@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import Stripe from 'stripe';
 import { db } from '@/lib/db';
-import { sendCredentialsEmail } from '@/lib/email';
+import { sendWelcomeEmail } from '@/lib/email';
+import crypto from 'crypto';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', { 
   apiVersion: '2026-01-28.clover' as any
@@ -56,9 +57,9 @@ export async function POST(request: NextRequest) {
 
 /**
  * Handle successful checkout
- * - Create user account with auto-generated credentials
- * - Send credentials via email
- * - Redirect to success page with login info
+ * - Create user account with setup token (no password yet)
+ * - Send welcome email with password setup link
+ * - Create subscription record
  */
 async function handleCheckoutComplete(session: Stripe.Checkout.Session) {
   const email = session.customer_details?.email || session.customer_email;
@@ -75,7 +76,7 @@ async function handleCheckoutComplete(session: Stripe.Checkout.Session) {
   const existingUser = await db.users.findByEmail(email);
 
   if (existingUser) {
-    // User exists, just update subscription
+    // User exists, update subscription
     await db.users.update(existingUser.id!, {
       stripe_customer_id: customerId,
       subscription: 'inner-circle'
@@ -94,18 +95,20 @@ async function handleCheckoutComplete(session: Stripe.Checkout.Session) {
     return;
   }
 
-  // Generate unique username and password
-  const username = email.split('@')[0] + '_' + Math.random().toString(36).substring(2, 8);
-  const tempPassword = generateSecurePassword();
+  // Generate setup token for password creation
+  const setupToken = crypto.randomBytes(32).toString('hex');
+  const setupExpires = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000); // 7 days
 
-  // Create new user
+  // Create new user (no password yet, will be set via setup link)
   const user = await db.users.create({
     email,
-    password: tempPassword, // Will be hashed by middleware
+    password: '', // Empty until user sets password via setup link
     name: session.customer_details?.name || email.split('@')[0],
     role: 'user',
     subscription: 'inner-circle',
-    stripe_customer_id: customerId
+    stripe_customer_id: customerId,
+    setup_token: setupToken,
+    setup_expires: setupExpires.toISOString()
   });
 
   // Create subscription record
@@ -118,10 +121,10 @@ async function handleCheckoutComplete(session: Stripe.Checkout.Session) {
     end_date: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString()
   });
 
-  console.log('✅ Created new user:', user.id);
+  console.log('✅ Created new user with setup token:', user.id);
 
-  // Send credentials email
-  await sendCredentialsEmail(email, username, tempPassword);
+  // Send welcome email with password setup link
+  await sendWelcomeEmail(email, setupToken);
 
   return { userId: user.id };
 }
@@ -131,25 +134,12 @@ async function handleCheckoutComplete(session: Stripe.Checkout.Session) {
  */
 async function handleSubscriptionChange(subscription: Stripe.Subscription) {
   const customerId = subscription.customer as string;
-
-  console.log('Subscription changed:', {
-    customerId,
-    status: subscription.status,
-    cancelAtPeriodEnd: subscription.cancel_at_period_end
-  });
-
-  // Note: Would need to query by stripe_customer_id to find the user
-  // For now, we log the event - user management via Stripe Dashboard
+  console.log('Subscription changed:', { customerId, status: subscription.status });
 }
 
 /**
- * Generate secure random password
+ * Generate unique username (for reference, not used for login)
  */
-function generateSecurePassword(): string {
-  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789!@#$%';
-  let password = '';
-  for (let i = 0; i < 12; i++) {
-    password += chars.charAt(Math.floor(Math.random() * chars.length));
-  }
-  return password;
+function generateUsername(email: string): string {
+  return email.split('@')[0] + '_' + Math.random().toString(36).substring(2, 8);
 }
