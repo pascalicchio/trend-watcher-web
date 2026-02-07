@@ -436,9 +436,36 @@ const LandingPage: React.FC = () => {
                 <li>Velocity + Saturation scoring</li>
               </ul>
 
-              <a href="/api/checkout" className={`${styles.pricingCta} ${styles.btnPrimary}`} onClick={(e) => { e.preventDefault(); fetch('/api/checkout', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ priceId: 'price_1Swyxa31jVHQylkhu0zQN5wn' }) }).then(r => r.json()).then(d => { if (d.url) window.location.href = d.url; }); }}>
+              <button
+                className={`${styles.pricingCta} ${styles.btnPrimary}`}
+                onClick={(e) => {
+                  e.preventDefault();
+                  fetch('/api/checkout', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ priceId: 'price_1Swyxa31jVHQylkhu0zQN5wn' })
+                  })
+                  .then(r => r.json())
+                  .then(d => {
+                    if (d.url) window.location.href = d.url;
+                  });
+                }}
+                style={{
+                  width: '100%',
+                  padding: '18px',
+                  fontSize: '16px',
+                  fontWeight: '700',
+                  borderRadius: '8px',
+                  border: 'none',
+                  cursor: 'pointer',
+                  background: 'linear-gradient(135deg, #10B981, #059669)',
+                  color: '#000',
+                  textAlign: 'center',
+                  display: 'block'
+                }}
+              >
                 Start 2-Day Free Trial →
-              </a>
+              </button>
               <div style={{ textAlign: 'center', marginTop: '16px', fontSize: '13px', color: 'var(--text-tertiary)' }}>
                 💰 No winning product? Don't pay a cent.
               </div>
