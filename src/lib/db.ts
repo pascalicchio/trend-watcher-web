@@ -2,15 +2,10 @@
 // Supports both file-based (dev) and Supabase (production)
 
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
+import crypto from 'crypto';
 
-// Explicit Supabase URL for Vercel - FORCE the correct project
-const supabaseUrl = 'https://qijbkikzcvpaqztlitbj.supabase.co';
-const supabaseAnonKey = process.env.SUPABASE_ANON_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
-
-export const supabase: SupabaseClient | null = 
-  supabaseUrl && supabaseAnonKey 
-    ? createClient(supabaseUrl, supabaseAnonKey)
-    : null;
+// Types
+export interface User {
   id?: string;
   email: string;
   password?: string;
@@ -55,9 +50,9 @@ export interface IntelligenceCard {
   created_at?: string;
 }
 
-// Supabase client (undefined if env vars not set)
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.SUPABASE_URL;
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || process.env.SUPABASE_ANON_KEY || process.env.SUPABASE_PUBLISHABLE_DEFAULT_KEY;
+// Explicit Supabase URL for Vercel
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.SUPABASE_URL || '';
+const supabaseAnonKey = process.env.SUPABASE_ANON_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || process.env.SUPABASE_PUBLISHABLE_DEFAULT_KEY || '';
 
 export const supabase: SupabaseClient | null = 
   supabaseUrl && supabaseAnonKey 
@@ -106,8 +101,8 @@ export const db = {
       return data.users.find((u: User) => u.email === email);
     },
     findById: async (id: string): Promise<User | null> => {
-      console.log('🔍 DB looking for user by id:', id, '| URL:', supabaseUrl);
       if (useSupabase) {
+        console.log('🔍 DB finding user by id:', id, '| URL:', supabaseUrl, '| key:', supabaseAnonKey.substring(0, 20) + '...');
         const { data } = await supabase!.from('users').select('*').eq('id', id).single();
         console.log('🔍 DB result:', data?.email || 'null');
         return data;
