@@ -1,7 +1,20 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { getTokenFromRequest, verifyToken } from '@/lib/auth';
-import atomicStorage from '../../../storage/atomic-storage';
+
+// Dynamic import to avoid webpack issues with external modules
+let atomicStorage: any = null;
+
+async function getAtomicStorage() {
+  if (!atomicStorage) {
+    try {
+      atomicStorage = require('../../../../trendwatcher/storage/atomic-storage');
+    } catch (e) {
+      console.warn('Could not load atomic storage:', e);
+    }
+  }
+  return atomicStorage;
+}
 
 export async function GET(request: NextRequest) {
   try {
@@ -25,12 +38,16 @@ export async function GET(request: NextRequest) {
     if (type === 'daily-top5') {
       // Fetch from PostgreSQL database
       try {
-        const products = await atomicStorage.getDailyTop5();
-        return NextResponse.json({ 
-          success: true,
-          source: 'database',
-          products 
-        });
+        const storage = await getAtomicStorage();
+        if (storage && storage.getDailyTop5) {
+          const products = await storage.getDailyTop5();
+          return NextResponse.json({ 
+            success: true,
+            source: 'database',
+            products 
+          });
+        }
+        throw new Error('Atomic storage not available');
       } catch (dbError) {
         // Fallback to legacy JSON if DB fails
         console.warn('Database fetch failed, falling back to JSON:', dbError);
