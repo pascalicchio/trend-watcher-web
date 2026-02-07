@@ -92,6 +92,7 @@ export const db = {
   // Users
   users: {
     findByEmail: async (email: string): Promise<User | null> => {
+      console.log('🔍 Using DB provider:', useSupabase ? 'supabase' : 'file');
       if (useSupabase) {
         const { data } = await supabase!.from('users').select('*').eq('email', email).single();
         return data;
@@ -100,8 +101,10 @@ export const db = {
       return data.users.find((u: User) => u.email === email);
     },
     findById: async (id: string): Promise<User | null> => {
+      console.log('🔍 DB looking for user by id:', id, 'provider:', useSupabase ? 'supabase' : 'file');
       if (useSupabase) {
         const { data } = await supabase!.from('users').select('*').eq('id', id).single();
+        console.log('🔍 DB result:', data?.email || 'null');
         return data;
       }
       const data = readFileDB();

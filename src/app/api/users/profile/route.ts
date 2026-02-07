@@ -8,17 +8,23 @@ export const dynamic = 'force-dynamic';
 export async function GET(request: NextRequest) {
   try {
     const token = getTokenFromRequest(request);
+    console.log('🔍 Profile request - Token exists:', !!token);
+    
     if (!token) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
     
     const payload = await verifyToken(token);
+    console.log('🔍 Token payload:', payload?.id);
+    
     if (!payload) {
       return NextResponse.json({ error: 'Invalid token' }, { status: 401 });
     }
     
     // CRITICAL: Verify user still exists in database
+    console.log('🔍 Looking up user:', payload.id);
     const user = await db.users.findById(payload.id);
+    console.log('🔍 User found in DB:', !!user);
     
     if (!user) {
       console.log('❌ User not found - account may have been deleted');
