@@ -1,5 +1,5 @@
 import sgMail from '@sendgrid/mail';
-import nodemailer from 'nodemailer';
+import nodemailer, { TransportOptions } from 'nodemailer';
 
 // SendGrid configuration
 const SENDGRID_API_KEY = process.env.SENDGRID_API_KEY;
@@ -72,13 +72,16 @@ async function sendEmail(to: string, subject: string, html: string, text: string
 
   if (BREVO_SMTP_USER && BREVO_SMTP_PASS) {
     try {
+      // @ts-ignore - nodemailer types issue with host property
       const transporter = nodemailer.createTransport({
         host: BREVO_SMTP_HOST,
         port: BREVO_SMTP_PORT,
         secure: BREVO_SMTP_PORT === 465,
-        auth: { user: BREVO_SMTP_USER, pass: BREVO_SMTP_PASS },
-        timeout: 10000 // 10 second timeout
-      });
+        auth: {
+          user: BREVO_SMTP_USER,
+          pass: BREVO_SMTP_PASS
+        }
+      } as TransportOptions);
 
       await transporter.sendMail({
         from: `"TrendWatcher" <${BREVO_FROM_EMAIL}>`,
