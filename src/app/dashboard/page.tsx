@@ -52,25 +52,31 @@ export default function DashboardOverview() {
       try {
         // Add timestamp to force fresh data
         const [userRes, cardsRes] = await Promise.all([
-          fetch(`/api/users/profile?_=${Date.now()}`),
-          fetch(`/api/intelligence-cards?_=${Date.now()}`)
+          fetch(`/api/users/profile?_=${Date.now()}`, { cache: 'no-store' }),
+          fetch(`/api/intelligence-cards?_=${Date.now()}`, { cache: 'no-store' })
         ]);
         
         const userData = await userRes.json();
         const cardsData = await cardsRes.json();
         
-        // Check if user was deleted or subscription expired
-        if (userData.forceLogout || userData.error === 'Account not found' || userData.error === 'Subscription expired') {
-          console.log('⚠️ Force logout triggered:', userData.error);
-          // Clear auth cookie and redirect to login
-          document.cookie = 'auth_token=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT';
-          window.location.href = '/login?reason=' + (userData.error || 'session_expired');
-          return;
-        }
+        console.log('[Dashboard] Response status:', userRes.status);
+        console.log('[Dashboard] User data:', userData);
         
-        if (!userRes.ok) {
-          console.error('Profile error:', userData.error);
-          window.location.href = '/login';
+        // Check if user was deleted or subscription expired - MORE AGGRESSIVE
+        const shouldLogout = 
+          !userRes.ok ||
+          userData.forceLogout ||
+          userData.error === 'Account not found' ||
+          userData.error === 'Subscription expired' ||
+          !userData.user;
+        
+        if (shouldLogout) {
+          console.log('⚠️ FORCE LOGOUT:', userData.error || 'User missing');
+          // Clear ALL cookies
+          document.cookie = 'auth_token=; Path=/; Domain=trendwatcher.io; Expires=Thu, 01 Jan 1970 00:00:00 GMT';
+          document.cookie = 'auth_token=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT';
+          // Use replace to prevent back button
+          window.location.replace('/login?reason=session_expired');
           return;
         }
         
@@ -79,7 +85,7 @@ export default function DashboardOverview() {
         setCards(cardsData.cards || []);
       } catch (error) {
         console.error('Error fetching dashboard data:', error);
-        window.location.href = '/login';
+        window.location.replace('/login');
       } finally {
         setLoading(false);
       }

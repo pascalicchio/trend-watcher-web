@@ -31,7 +31,10 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ 
         error: 'Account not found',
         forceLogout: true 
-      }, { status: 401 });
+      }, { 
+        status: 401,
+        headers: { 'Cache-Control': 'no-store, no-cache, must-revalidate' }
+      });
     }
     
     // CRITICAL: Check subscription expiration
@@ -46,7 +49,10 @@ export async function GET(request: NextRequest) {
           error: 'Subscription expired',
           expiredAt: activeSub.end_date,
           forceLogout: true
-        }, { status: 401 });
+        }, { 
+          status: 401,
+          headers: { 'Cache-Control': 'no-store, no-cache, must-revalidate' }
+        });
       }
     }
     
