@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import Stripe from 'stripe';
+import { db } from '@/lib/db';
+import crypto from 'crypto';
 
 const APP_URL = 'https://trendwatcher.io';
 
@@ -22,6 +24,12 @@ export async function POST(request: NextRequest) {
     }
     
     const stripe = getStripe();
+    
+    // Create or get Stripe customer
+    // Note: We'll get email from checkout form
+    let customerId = 'temp_' + Date.now();
+    
+    console.log('🆕 Creating checkout session...');
     
     const session = await stripe.checkout.sessions.create({
       mode: 'subscription',

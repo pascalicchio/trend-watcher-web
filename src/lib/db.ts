@@ -156,6 +156,14 @@ export const db = {
       }
       const data = readFileDB();
       return data.users.find((u: User) => u.setup_token === token);
+    },
+    findByCustomerId: async (customerId: string): Promise<User | null> => {
+      if (useSupabase) {
+        const { data } = await supabase!.from('users').select('*').eq('stripe_customer_id', customerId).single();
+        return data;
+      }
+      const data = readFileDB();
+      return data.users.find((u: User) => u.stripe_customer_id === customerId);
     }
   },
 
