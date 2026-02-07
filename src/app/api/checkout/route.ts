@@ -18,7 +18,7 @@ export async function POST(request: NextRequest) {
   try {
     const { priceId } = await request.json();
     
-    const successUrl = `${APP_URL}/pricing?success=true`;
+    const successUrl = `${APP_URL}/pricing/success`;
     const cancelUrl = `${APP_URL}/pricing?canceled=true`;
     
     const stripe = getStripe();
@@ -31,6 +31,9 @@ export async function POST(request: NextRequest) {
       }],
       success_url: successUrl,
       cancel_url: cancelUrl,
+      subscription_data: {
+        trial_period_days: 2,  // 2-day free trial - won't charge until trial ends
+      },
     });
     
     return new NextResponse(JSON.stringify({ url: session.url }), {
