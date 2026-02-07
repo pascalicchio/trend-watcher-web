@@ -414,7 +414,7 @@ const LandingPage: React.FC = () => {
                 <li>Community access (read-only)</li>
               </ul>
 
-              <a href="/dashboard" className={`${styles.pricingCta} ${styles.btnSecondary}`}>Access Public Feed</a>
+              <a href="/register" className={`${styles.pricingCta} ${styles.btnSecondary}`}>Get Started Free</a>
             </div>
 
             <div className={`${styles.pricingCard} ${styles.featured}`}>
@@ -435,7 +435,7 @@ const LandingPage: React.FC = () => {
                 <li>Velocity + Saturation scoring</li>
               </ul>
 
-              <a href="/register" className={`${styles.pricingCta} ${styles.btnPrimary}`}>
+              <a href="/pricing" className={`${styles.pricingCta} ${styles.btnPrimary}`}>
                 Start 2-Day Free Trial →
               </a>
               <div style={{ textAlign: 'center', marginTop: '16px', fontSize: '13px', color: 'var(--text-tertiary)' }}>

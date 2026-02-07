@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 
 const PLANS = [
   {
@@ -36,6 +37,7 @@ const PLANS = [
 export default function PricingPage() {
   const [loading, setLoading] = useState<string | null>(null);
   const [searchParams, setSearchParams] = useState({ success: '', canceled: '' });
+  const router = useRouter();
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -47,7 +49,7 @@ export default function PricingPage() {
 
   const handleCheckout = async (priceId: string | null) => {
     if (!priceId) return;
-    
+
     setLoading(priceId);
     try {
       const response = await fetch('/api/checkout', {
@@ -56,9 +58,8 @@ export default function PricingPage() {
         body: JSON.stringify({ priceId }),
       });
       const { url, error } = await response.json();
-      
+
       if (url) {
-        // Direct redirect
         window.location.href = url;
       } else if (error) {
         console.error('Server error:', error);
@@ -70,16 +71,101 @@ export default function PricingPage() {
     }
   };
 
+  if (searchParams.success) {
+    return (
+      <div style={{
+        minHeight: '100vh',
+        background: '#0a0a0a',
+        color: '#fafafa',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: '20px'
+      }}>
+        <div style={{
+          background: '#111',
+          border: '1px solid #10B981',
+          borderRadius: '20px',
+          padding: '60px',
+          maxWidth: '500px',
+          textAlign: 'center'
+        }}>
+          <div style={{ fontSize: '64px', marginBottom: '20px' }}>🎉</div>
+          <h1 style={{
+            fontSize: '32px',
+            fontWeight: 'bold',
+            marginBottom: '20px',
+            background: 'linear-gradient(135deg, #10B981, #059669)',
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent'
+          }}>
+            Welcome to the Inner Circle!
+          </h1>
+
+          <div style={{
+            background: '#1a1a1a',
+            borderRadius: '12px',
+            padding: '24px',
+            marginBottom: '30px',
+            textAlign: 'left'
+          }}>
+            <p style={{ color: '#aaa', marginBottom: '16px', lineHeight: '1.6' }}>
+              Your payment was successful. Check your email for your login credentials:
+            </p>
+            <ul style={{ color: '#888', fontSize: '14px', paddingLeft: '20px', lineHeight: '2' }}>
+              <li>📧 Check your inbox (and spam folder)</li>
+              <li>🔐 Use the temporary password provided</li>
+              <li>🔑 Log in and change your password</li>
+            </ul>
+          </div>
+
+          <div style={{ display: 'flex', gap: '16px', justifyContent: 'center' }}>
+            <button
+              onClick={() => router.push('/login')}
+              style={{
+                padding: '14px 32px',
+                borderRadius: '8px',
+                border: 'none',
+                background: 'linear-gradient(135deg, #10B981, #059669)',
+                color: '#000',
+                fontWeight: 'bold',
+                fontSize: '16px',
+                cursor: 'pointer'
+              }}
+            >
+              Go to Login
+            </button>
+            <button
+              onClick={() => router.push('/')}
+              style={{
+                padding: '14px 32px',
+                borderRadius: '8px',
+                border: '1px solid #333',
+                background: 'transparent',
+                color: '#888',
+                fontWeight: 'bold',
+                fontSize: '16px',
+                cursor: 'pointer'
+              }}
+            >
+              Back to Home
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div style={{ 
+    <div style={{
       minHeight: '100vh',
       background: '#0a0a0a',
       color: '#fafafa',
       padding: '40px 20px'
     }}>
-      {searchParams.success && (
+      {searchParams.canceled && (
         <div style={{
-          background: 'linear-gradient(135deg, #10B981, #059669)',
+          background: '#991B1B',
           padding: '20px',
           borderRadius: '12px',
           marginBottom: '40px',
@@ -87,17 +173,16 @@ export default function PricingPage() {
           maxWidth: '600px',
           margin: '0 auto 40px'
         }}>
-          <h2 style={{ margin: 0, fontSize: '24px' }}>🎉 Welcome to the Inner Circle!</h2>
-          <p style={{ margin: '10px 0 0' }}>Your subscription is active.</p>
+          <p style={{ margin: 0 }}>❌ Payment was canceled. No worries—try again when ready!</p>
         </div>
       )}
 
       <div style={{ textAlign: 'center', marginBottom: '60px' }}>
-        <h1 style={{ 
+        <h1 style={{
           fontSize: '48px',
           fontWeight: 'bold',
           marginBottom: '16px',
-          background: 'linear-gradient(135deg, #10B981, #059669)',
+          background: 'linear-gradient(135deg, #8B5CF6, #EC4899)',
           WebkitBackgroundClip: 'text',
           WebkitTextFillColor: 'transparent'
         }}>
@@ -108,9 +193,9 @@ export default function PricingPage() {
         </p>
       </div>
 
-      <div style={{ 
-        display: 'flex', 
-        justifyContent: 'center', 
+      <div style={{
+        display: 'flex',
+        justifyContent: 'center',
         gap: '30px',
         flexWrap: 'wrap',
         maxWidth: '900px',
@@ -144,8 +229,8 @@ export default function PricingPage() {
               </div>
             )}
 
-            <h3 style={{ 
-              fontSize: '24px', 
+            <h3 style={{
+              fontSize: '24px',
               fontWeight: 'bold',
               marginBottom: '10px',
               color: plan.popular ? '#10B981' : '#fafafa'
@@ -174,7 +259,7 @@ export default function PricingPage() {
                 padding: '14px',
                 borderRadius: '8px',
                 border: 'none',
-                background: plan.popular 
+                background: plan.popular
                   ? 'linear-gradient(135deg, #10B981, #059669)'
                   : '#333',
                 color: plan.popular ? '#000' : '#888',
