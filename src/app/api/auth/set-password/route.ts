@@ -47,47 +47,57 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ error: 'Payment not completed' }, { status: 400 });
       }
 
+      console.log('💳 Stripe session verified');
+
       let user = await db.users.findByEmail(email);
       
       if (!user) {
+        // Try finding by customer ID
         user = await db.users.findByCustomerId(session.customer as string);
         
         if (!user) {
-          try {
-            const setupToken = crypto.randomBytes(32).toString('hex');
-            user = await db.users.create({
-              email,
-              password: '',
-              name: session.customer_details?.name || email.split('@')[0],
-              role: 'user',
-              subscription: 'inner-circle',
-              stripe_customer_id: session.customer as string,
-              setup_token: setupToken,
-              setup_expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString()
-            });
-            console.log('✅ User created:', user.id);
-          } catch (e: any) {
-            console.error('❌ User create error:', e.message);
-            return NextResponse.json({ error: 'Failed to create user' }, { status: 500 });
-          }
+          // Create new user
+          const setupToken = crypto.randomBytes(32).toString('hex');
+          user = await db.users.create({
+            email,
+            password: '',
+            name: session.customer_details?.name || email.split('@')[0],
+            role: 'user',
+            subscription: 'inner-circle',
+            stripe_customer_id: session.customer as string,
+            setup_token: setupToken,
+            setup_expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString()
+          });
+          console.log('✅ User created:', user.id);
         }
+      } else {
+        console.log('👤 Existing user:', user.id);
       }
 
-      // Create subscription
+      // ALWAYS create subscription record
       try {
-        await db.subscriptions.create({
-          user_id: user.id!,
-          plan: 'inner-circle',
-          stripe_payment_id: session.payment_intent as string,
-          status: 'active',
-          start_date: new Date().toISOString(),
-          end_date: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString()
-        });
-        console.log('✅ Subscription created');
+        // Check if subscription already exists
+        const existingSubs = await db.subscriptions.findByUserId(user.id!);
+        const hasSubscription = existingSubs.some(s => s.status === 'active');
+        
+        if (!hasSubscription) {
+          await db.subscriptions.create({
+            user_id: user.id!,
+            plan: 'inner-circle',
+            stripe_payment_id: session.payment_intent as string,
+            status: 'active',
+            start_date: new Date().toISOString(),
+            end_date: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString()
+          });
+          console.log('✅ Subscription created');
+        } else {
+          console.log('ℹ️ Subscription already exists');
+        }
       } catch (e: any) {
         console.error('❌ Subscription error:', e.message);
       }
 
+      // Set password
       const passwordHash = await bcrypt.hash(password, 12);
 
       await db.users.update(user.id!, {
@@ -97,7 +107,7 @@ export async function POST(request: NextRequest) {
         subscription: 'inner-circle'
       });
 
-      console.log('✅ Password set (session flow)');
+      console.log('✅ All done!');
       return NextResponse.json({ success: true });
     }
 
