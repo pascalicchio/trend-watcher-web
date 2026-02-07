@@ -1,43 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import bcrypt from 'bcryptjs';
-import crypto from 'crypto';
-
-const DB = {
-  users: {
-    findByEmail: async (email: string) => {
-      const { data, error } = await (await import('@/lib/supabase')).supabase
-        .from('users')
-        .select('*')
-        .eq('email', email)
-        .single();
-      return data;
-    },
-    findById: async (id: string) => {
-      const { data, error } = await (await import('@/lib/supabase')).supabase
-        .from('users')
-        .select('*')
-        .eq('id', id)
-        .single();
-      return data;
-    },
-    findBySetupToken: async (token: string) => {
-      const { data, error } = await (await import('@/lib/supabase')).supabase
-        .from('users')
-        .select('*')
-        .eq('setup_token', token)
-        .single();
-      return data;
-    },
-    update: async (id: string, updates: any) => {
-      const { error } = await (await import('@/lib/supabase')).supabase
-        .from('users')
-        .update(updates)
-        .eq('id', id);
-      return !error;
-    }
-  }
-};
 
 export async function POST(request: NextRequest) {
   try {
@@ -51,7 +14,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Find user by setup token
-    const user = await DB.users.findBySetupToken(token);
+    const user = await db.users.findBySetupToken(token);
 
     if (!user) {
       return NextResponse.json(
@@ -80,7 +43,7 @@ export async function POST(request: NextRequest) {
     const passwordHash = await bcrypt.hash(password, 12);
 
     // Update user with password and clear setup token
-    await DB.users.update(user.id, {
+    await db.users.update(user.id!, {
       password: passwordHash,
       setup_token: null,
       setup_expires: null

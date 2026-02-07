@@ -146,6 +146,14 @@ export const db = {
       }
       const data = readFileDB();
       return data.users.find((u: User) => u.reset_token === token);
+    },
+    findBySetupToken: async (token: string): Promise<User | null> => {
+      if (useSupabase) {
+        const { data } = await supabase!.from('users').select('*').eq('setup_token', token).single();
+        return data;
+      }
+      const data = readFileDB();
+      return data.users.find((u: User) => u.setup_token === token);
     }
   },
 
