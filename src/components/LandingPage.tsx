@@ -1,5 +1,6 @@
 'use client';
 
+// TrendWatcher - AI-powered trend detection for e-commerce
 import React, { useEffect, useState } from 'react';
 import styles from './LandingPage.module.css';
 
