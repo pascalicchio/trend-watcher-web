@@ -71,6 +71,8 @@ export default function DashboardOverview() {
   const [cards, setCards] = useState<IntelligenceCard[]>([]);
   const [trends, setTrends] = useState<Trend[]>([]);
   const [loading, setLoading] = useState(true);
+  const [filter, setFilter] = useState('all');
+  const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
   const pathname = usePathname();
 
   useEffect(() => {
@@ -130,10 +132,14 @@ export default function DashboardOverview() {
   useEffect(() => {
     async function fetchTrends() {
       try {
-        const response = await fetch('/api/trends?limit=20');
+        const url = filter === 'all' 
+          ? '/api/trends?limit=50' 
+          : `/api/trends?limit=50&source=${filter}`;
+        const response = await fetch(url);
         const data = await response.json();
         if (data.success) {
           setTrends(data.trends);
+          setLastUpdated(new Date());
         }
       } catch (error) {
         console.error('Error fetching trends:', error);
@@ -141,9 +147,13 @@ export default function DashboardOverview() {
     }
     
     fetchTrends();
-  }, []);
+  }, [filter]);
 
   const latestCard = cards[0];
+
+  // Stats
+  const blueOceanCount = trends.filter(t => t.saturation < 1).length;
+  const hotTrendsCount = trends.filter(t => t.velocity > 500).length;
 
   if (loading) {
     return (
@@ -257,6 +267,133 @@ export default function DashboardOverview() {
             Live Trends
           </div>
           <div style={{ fontSize: '28px', fontWeight: '700' }}>{trends.length}</div>
+        </div>
+      </div>
+
+      {/* Filter Bar */}
+      <div style={{
+        background: 'rgba(255, 255, 255, 0.02)',
+        border: '1px solid rgba(255, 255, 255, 0.05)',
+        borderRadius: '12px',
+        padding: '20px',
+        marginBottom: '32px'
+      }}>
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(4, 1fr)',
+          gap: '16px',
+          marginBottom: '20px'
+        }}>
+          <div style={{ textAlign: 'center' }}>
+            <div style={{ 
+              fontSize: '28px', 
+              fontWeight: '700',
+              background: 'linear-gradient(135deg, #8B5CF6 0%, #EC4899 100%)',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent'
+            }}>
+              {trends.length}
+            </div>
+            <div style={{ fontSize: '12px', color: '#71717a', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+              Active Trends
+            </div>
+          </div>
+
+          <div style={{ textAlign: 'center' }}>
+            <div style={{ 
+              fontSize: '28px', 
+              fontWeight: '700',
+              color: '#00C9FF'
+            }}>
+              {blueOceanCount}
+            </div>
+            <div style={{ fontSize: '12px', color: '#71717a', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+              Blue Ocean
+            </div>
+          </div>
+
+          <div style={{ textAlign: 'center' }}>
+            <div style={{ 
+              fontSize: '28px', 
+              fontWeight: '700',
+              color: '#EC4899'
+            }}>
+              {hotTrendsCount}
+            </div>
+            <div style={{ fontSize: '12px', color: '#71717a', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+              Hot Trends
+            </div>
+          </div>
+
+          <div style={{ textAlign: 'center' }}>
+            <div style={{ 
+              fontSize: '28px', 
+              fontWeight: '700',
+              color: '#fafafa'
+            }}>
+              {lastUpdated ? lastUpdated.toLocaleTimeString() : '--:--'}
+            </div>
+            <div style={{ fontSize: '12px', color: '#71717a', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+              Last Updated
+            </div>
+          </div>
+        </div>
+
+        {/* Filter Buttons */}
+        <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', alignItems: 'center' }}>
+          {['all', 'google_trends', 'amazon_movers', 'ebay_trending'].map((source) => (
+            <button
+              key={source}
+              onClick={() => setFilter(source)}
+              style={{
+                padding: '10px 20px',
+                background: filter === source 
+                  ? 'linear-gradient(135deg, rgba(139, 92, 246, 0.2) 0%, rgba(236, 72, 153, 0.2) 100%)'
+                  : 'rgba(255, 255, 255, 0.03)',
+                border: filter === source 
+                  ? '1px solid #8B5CF6'
+                  : '1px solid rgba(255, 255, 255, 0.1)',
+                borderRadius: '8px',
+                color: filter === source ? '#fafafa' : '#a1a1aa',
+                fontSize: '14px',
+                cursor: 'pointer',
+                transition: 'all 0.2s',
+                textTransform: 'capitalize'
+              }}
+            >
+              {source === 'all' ? 'All Sources' : source.replace('_', ' ')}
+            </button>
+          ))}
+
+          <button
+            onClick={() => {
+              const url = filter === 'all' 
+                ? '/api/trends?limit=50' 
+                : `/api/trends?limit=50&source=${filter}`;
+              fetch(url)
+                .then(r => r.json())
+                .then(data => {
+                  if (data.success) {
+                    setTrends(data.trends);
+                    setLastUpdated(new Date());
+                  }
+                });
+            }}
+            style={{
+              marginLeft: 'auto',
+              padding: '10px 20px',
+              background: 'linear-gradient(135deg, #8B5CF6 0%, #EC4899 100%)',
+              border: 'none',
+              borderRadius: '8px',
+              color: 'white',
+              fontSize: '14px',
+              fontWeight: '600',
+              cursor: 'pointer',
+              transition: 'all 0.2s'
+            }}
+          >
+            ↻ Refresh
+          </button>
         </div>
       </div>
 
