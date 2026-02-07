@@ -14,7 +14,7 @@ const DB = {
       return data;
     },
     findById: async (id: string) => {
-      const { data, error } = = await (await import('@/lib/supabase')).supabase
+      const { data, error } = await (await import('@/lib/supabase')).supabase
         .from('users')
         .select('*')
         .eq('id', id)
