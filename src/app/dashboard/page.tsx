@@ -48,18 +48,19 @@ export default function DashboardOverview() {
 
   useEffect(() => {
     setLoading(true);
+    
     async function fetchData() {
       try {
         // Add timestamp to force fresh data
         const [userRes, cardsRes] = await Promise.all([
-          fetch(`/api/users/profile?_=${Date.now()}`, { cache: 'no-store' }),
-          fetch(`/api/intelligence-cards?_=${Date.now()}`, { cache: 'no-store' })
+          fetch(\`/api/users/profile?_=\${Date.now()}\`, { cache: 'no-store' }),
+          fetch(\`/api/intelligence-cards?_=\${Date.now()}\`, { cache: 'no-store' })
         ]);
         
         const userData = await userRes.json();
         const cardsData = await cardsRes.json();
         
-        // Check if user was deleted or subscription expired - MORE AGGRESSIVE
+        // Check if user was deleted or subscription expired
         const shouldLogout = 
           !userRes.ok ||
           userData.forceLogout ||
@@ -69,12 +70,10 @@ export default function DashboardOverview() {
         
         if (shouldLogout) {
           console.log('⚠️ FORCE LOGOUT:', userData.error || 'User missing');
-          // Clear ALL cookies
           if (typeof document !== 'undefined') {
             document.cookie = 'auth_token=; Path=/; Domain=trendwatcher.io; Expires=Thu, 01 Jan 1970 00:00:00 GMT';
             document.cookie = 'auth_token=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT';
           }
-          // Use replace to prevent back button
           if (typeof window !== 'undefined') {
             window.location.replace('/login?reason=session_expired');
           }
@@ -92,25 +91,20 @@ export default function DashboardOverview() {
         setLoading(false);
       }
     }
+    
+    // Initial fetch
     fetchData();
-  }, [pathname]);
-
-  // Also check on window focus (user tabs back in)
-  useEffect(() => {
+    
+    // Also check on window focus (user tabs back in)
     function onFocus() {
       fetchData();
     }
     window.addEventListener('focus', onFocus);
-    return () => window.removeEventListener('focus', onFocus);
-  }, [pathname]);
-
-  // Also check on window focus (user tabs back in)
-  useEffect(() => {
-    function onFocus() {
-      fetchData();
-    }
-    window.addEventListener('focus', onFocus);
-    return () => window.removeEventListener('focus', onFocus);
+    
+    // Cleanup
+    return () => {
+      window.removeEventListener('focus', onFocus);
+    };
   }, [pathname]);
 
   const latestCard = cards[0];
@@ -153,7 +147,7 @@ export default function DashboardOverview() {
         </h1>
         <p style={{ color: 'var(--text-secondary)' }}>
           {latestCard 
-            ? `Latest report: ${latestCard.data.summary.totalTrends} trends detected`
+            ? \`Latest report: \${latestCard.data.summary.totalTrends} trends detected\`
             : 'Ready to start detecting trends'}
         </p>
       </div>
